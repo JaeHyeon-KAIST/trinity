@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 70;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -15,6 +15,7 @@
 		7699B88040F8A987B510C191 /* libPods-trinity-trinityTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 19F6CBCC0A4E27FBF8BF4A61 /* libPods-trinity-trinityTests.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		A18AD357F5018A37D92CD800 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */; };
+		F8A8CDF62CF1C0EA00527D53 /* Trinity Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = F8A8CDD32CF1C0E800527D53 /* Trinity Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -25,7 +26,42 @@
 			remoteGlobalIDString = 13B07F861A680F5B00A75B9A;
 			remoteInfo = trinity;
 		};
+		F8A8CDE32CF1C0EA00527D53 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 83CBB9F71A601CBA00E9B192 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F8A8CDD22CF1C0E800527D53;
+			remoteInfo = "Trinity Watch App";
+		};
+		F8A8CDED2CF1C0EA00527D53 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 83CBB9F71A601CBA00E9B192 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F8A8CDD22CF1C0E800527D53;
+			remoteInfo = "Trinity Watch App";
+		};
+		F8A8CDF42CF1C0EA00527D53 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 83CBB9F71A601CBA00E9B192 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F8A8CDD22CF1C0E800527D53;
+			remoteInfo = "Trinity Watch App";
+		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		F8A8CDF72CF1C0EA00527D53 /* Embed Watch Content */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(CONTENTS_FOLDER_PATH)/Watch";
+			dstSubfolderSpec = 16;
+			files = (
+				F8A8CDF62CF1C0EA00527D53 /* Trinity Watch App.app in Embed Watch Content */,
+			);
+			name = "Embed Watch Content";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		00E356EE1AD99517003FC87E /* trinityTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = trinityTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -47,7 +83,16 @@
 		89C6BE57DB24E9ADA2F236DE /* Pods-trinity-trinityTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-trinity-trinityTests.release.xcconfig"; path = "Target Support Files/Pods-trinity-trinityTests/Pods-trinity-trinityTests.release.xcconfig"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		F8A8CDCE2CF191BD00527D53 /* trinity.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = trinity.entitlements; path = trinity/trinity.entitlements; sourceTree = "<group>"; };
+		F8A8CDD32CF1C0E800527D53 /* Trinity Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Trinity Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		F8A8CDE22CF1C0EA00527D53 /* Trinity Watch AppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Trinity Watch AppTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		F8A8CDEC2CF1C0EA00527D53 /* Trinity Watch AppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Trinity Watch AppUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		F8A8CDD42CF1C0E800527D53 /* Trinity Watch App */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = "Trinity Watch App"; sourceTree = "<group>"; };
+		F8A8CDE52CF1C0EA00527D53 /* Trinity Watch AppTests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = "Trinity Watch AppTests"; sourceTree = "<group>"; };
+		F8A8CDEF2CF1C0EA00527D53 /* Trinity Watch AppUITests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = "Trinity Watch AppUITests"; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		00E356EB1AD99517003FC87E /* Frameworks */ = {
@@ -63,6 +108,27 @@
 			buildActionMask = 2147483647;
 			files = (
 				0C80B921A6F3F58F76C31292 /* libPods-trinity.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F8A8CDD02CF1C0E800527D53 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F8A8CDDF2CF1C0EA00527D53 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F8A8CDE92CF1C0EA00527D53 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -124,6 +190,9 @@
 				13B07FAE1A68108700A75B9A /* trinity */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				00E356EF1AD99517003FC87E /* trinityTests */,
+				F8A8CDD42CF1C0E800527D53 /* Trinity Watch App */,
+				F8A8CDE52CF1C0EA00527D53 /* Trinity Watch AppTests */,
+				F8A8CDEF2CF1C0EA00527D53 /* Trinity Watch AppUITests */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				BBD78D7AC51CEA395F1C20DB /* Pods */,
@@ -138,6 +207,9 @@
 			children = (
 				13B07F961A680F5B00A75B9A /* trinity.app */,
 				00E356EE1AD99517003FC87E /* trinityTests.xctest */,
+				F8A8CDD32CF1C0E800527D53 /* Trinity Watch App.app */,
+				F8A8CDE22CF1C0EA00527D53 /* Trinity Watch AppTests.xctest */,
+				F8A8CDEC2CF1C0EA00527D53 /* Trinity Watch AppUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -188,15 +260,85 @@
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				00EEFC60759A1932668264C0 /* [CP] Embed Pods Frameworks */,
 				E235C05ADACE081382539298 /* [CP] Copy Pods Resources */,
+				F8A8CDF72CF1C0EA00527D53 /* Embed Watch Content */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				F8A8CDF52CF1C0EA00527D53 /* PBXTargetDependency */,
 			);
 			name = trinity;
 			productName = trinity;
 			productReference = 13B07F961A680F5B00A75B9A /* trinity.app */;
 			productType = "com.apple.product-type.application";
+		};
+		F8A8CDD22CF1C0E800527D53 /* Trinity Watch App */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F8A8CDFE2CF1C0EA00527D53 /* Build configuration list for PBXNativeTarget "Trinity Watch App" */;
+			buildPhases = (
+				F8A8CDCF2CF1C0E800527D53 /* Sources */,
+				F8A8CDD02CF1C0E800527D53 /* Frameworks */,
+				F8A8CDD12CF1C0E800527D53 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				F8A8CDD42CF1C0E800527D53 /* Trinity Watch App */,
+			);
+			name = "Trinity Watch App";
+			packageProductDependencies = (
+			);
+			productName = "Trinity Watch App";
+			productReference = F8A8CDD32CF1C0E800527D53 /* Trinity Watch App.app */;
+			productType = "com.apple.product-type.application";
+		};
+		F8A8CDE12CF1C0EA00527D53 /* Trinity Watch AppTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F8A8CDFF2CF1C0EA00527D53 /* Build configuration list for PBXNativeTarget "Trinity Watch AppTests" */;
+			buildPhases = (
+				F8A8CDDE2CF1C0EA00527D53 /* Sources */,
+				F8A8CDDF2CF1C0EA00527D53 /* Frameworks */,
+				F8A8CDE02CF1C0EA00527D53 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				F8A8CDE42CF1C0EA00527D53 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				F8A8CDE52CF1C0EA00527D53 /* Trinity Watch AppTests */,
+			);
+			name = "Trinity Watch AppTests";
+			packageProductDependencies = (
+			);
+			productName = "Trinity Watch AppTests";
+			productReference = F8A8CDE22CF1C0EA00527D53 /* Trinity Watch AppTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		F8A8CDEB2CF1C0EA00527D53 /* Trinity Watch AppUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F8A8CE002CF1C0EA00527D53 /* Build configuration list for PBXNativeTarget "Trinity Watch AppUITests" */;
+			buildPhases = (
+				F8A8CDE82CF1C0EA00527D53 /* Sources */,
+				F8A8CDE92CF1C0EA00527D53 /* Frameworks */,
+				F8A8CDEA2CF1C0EA00527D53 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				F8A8CDEE2CF1C0EA00527D53 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				F8A8CDEF2CF1C0EA00527D53 /* Trinity Watch AppUITests */,
+			);
+			name = "Trinity Watch AppUITests";
+			packageProductDependencies = (
+			);
+			productName = "Trinity Watch AppUITests";
+			productReference = F8A8CDEC2CF1C0EA00527D53 /* Trinity Watch AppUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
 
@@ -204,6 +346,7 @@
 		83CBB9F71A601CBA00E9B192 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				LastSwiftUpdateCheck = 1610;
 				LastUpgradeCheck = 1210;
 				TargetAttributes = {
 					00E356ED1AD99517003FC87E = {
@@ -212,6 +355,17 @@
 					};
 					13B07F861A680F5B00A75B9A = {
 						LastSwiftMigration = 1120;
+					};
+					F8A8CDD22CF1C0E800527D53 = {
+						CreatedOnToolsVersion = 16.1;
+					};
+					F8A8CDE12CF1C0EA00527D53 = {
+						CreatedOnToolsVersion = 16.1;
+						TestTargetID = F8A8CDD22CF1C0E800527D53;
+					};
+					F8A8CDEB2CF1C0EA00527D53 = {
+						CreatedOnToolsVersion = 16.1;
+						TestTargetID = F8A8CDD22CF1C0E800527D53;
 					};
 				};
 			};
@@ -230,6 +384,9 @@
 			targets = (
 				13B07F861A680F5B00A75B9A /* trinity */,
 				00E356ED1AD99517003FC87E /* trinityTests */,
+				F8A8CDD22CF1C0E800527D53 /* Trinity Watch App */,
+				F8A8CDE12CF1C0EA00527D53 /* Trinity Watch AppTests */,
+				F8A8CDEB2CF1C0EA00527D53 /* Trinity Watch AppUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -249,6 +406,27 @@
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				A18AD357F5018A37D92CD800 /* PrivacyInfo.xcprivacy in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F8A8CDD12CF1C0E800527D53 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F8A8CDE02CF1C0EA00527D53 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F8A8CDEA2CF1C0EA00527D53 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -403,6 +581,27 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		F8A8CDCF2CF1C0E800527D53 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F8A8CDDE2CF1C0EA00527D53 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F8A8CDE82CF1C0EA00527D53 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -410,6 +609,21 @@
 			isa = PBXTargetDependency;
 			target = 13B07F861A680F5B00A75B9A /* trinity */;
 			targetProxy = 00E356F41AD99517003FC87E /* PBXContainerItemProxy */;
+		};
+		F8A8CDE42CF1C0EA00527D53 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F8A8CDD22CF1C0E800527D53 /* Trinity Watch App */;
+			targetProxy = F8A8CDE32CF1C0EA00527D53 /* PBXContainerItemProxy */;
+		};
+		F8A8CDEE2CF1C0EA00527D53 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F8A8CDD22CF1C0E800527D53 /* Trinity Watch App */;
+			targetProxy = F8A8CDED2CF1C0EA00527D53 /* PBXContainerItemProxy */;
+		};
+		F8A8CDF52CF1C0EA00527D53 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F8A8CDD22CF1C0E800527D53 /* Trinity Watch App */;
+			targetProxy = F8A8CDF42CF1C0EA00527D53 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -476,12 +690,13 @@
 				DEVELOPMENT_TEAM = F46QD2GBLQ;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = trinity/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 0.1;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -505,12 +720,13 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = F46QD2GBLQ;
 				INFOPLIST_FILE = trinity/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 0.1;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -596,10 +812,7 @@
 					"-DFOLLY_CFG_NO_COROUTINES=1",
 					"-DFOLLY_HAVE_CLOCK_GETTIME=1",
 				);
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					" ",
-				);
+				OTHER_LDFLAGS = "$(inherited)  ";
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) DEBUG";
@@ -672,14 +885,246 @@
 					"-DFOLLY_CFG_NO_COROUTINES=1",
 					"-DFOLLY_HAVE_CLOCK_GETTIME=1",
 				);
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					" ",
-				);
+				OTHER_LDFLAGS = "$(inherited)  ";
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				USE_HERMES = true;
 				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		F8A8CDF82CF1C0EA00527D53 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = "Trinity Watch App/Trinity Watch App.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_ASSET_PATHS = "\"Trinity Watch App/Preview Content\"";
+				DEVELOPMENT_TEAM = F46QD2GBLQ;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Trinity-Watch-App-Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = Trinity;
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "This app uses HealthKit to track and display your heart rate.";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "This app uses HealthKit to display your real-time heart rate.";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = com.jaehyeon.trinity;
+				INFOPLIST_KEY_WKRunsIndependentlyOfCompanionApp = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 0.1;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jaehyeon.trinity.watchkitapp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 10.6;
+			};
+			name = Debug;
+		};
+		F8A8CDF92CF1C0EA00527D53 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = "Trinity Watch App/Trinity Watch App.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_ASSET_PATHS = "\"Trinity Watch App/Preview Content\"";
+				DEVELOPMENT_TEAM = F46QD2GBLQ;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Trinity-Watch-App-Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = Trinity;
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "This app uses HealthKit to track and display your heart rate.";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "This app uses HealthKit to display your real-time heart rate.";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = com.jaehyeon.trinity;
+				INFOPLIST_KEY_WKRunsIndependentlyOfCompanionApp = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 0.1;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jaehyeon.trinity.watchkitapp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 10.6;
+			};
+			name = Release;
+		};
+		F8A8CDFA2CF1C0EA00527D53 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = F46QD2GBLQ;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.jaehyeon.Trinity-Watch-AppTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Trinity Watch App.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Trinity Watch App";
+				WATCHOS_DEPLOYMENT_TARGET = 10.6;
+			};
+			name = Debug;
+		};
+		F8A8CDFB2CF1C0EA00527D53 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = F46QD2GBLQ;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.jaehyeon.Trinity-Watch-AppTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Trinity Watch App.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Trinity Watch App";
+				WATCHOS_DEPLOYMENT_TARGET = 10.6;
+			};
+			name = Release;
+		};
+		F8A8CDFC2CF1C0EA00527D53 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = F46QD2GBLQ;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.jaehyeon.Trinity-Watch-AppUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				TEST_TARGET_NAME = "Trinity Watch App";
+				WATCHOS_DEPLOYMENT_TARGET = 10.6;
+			};
+			name = Debug;
+		};
+		F8A8CDFD2CF1C0EA00527D53 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = F46QD2GBLQ;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.jaehyeon.Trinity-Watch-AppUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				TEST_TARGET_NAME = "Trinity Watch App";
+				WATCHOS_DEPLOYMENT_TARGET = 10.6;
 			};
 			name = Release;
 		};
@@ -709,6 +1154,33 @@
 			buildConfigurations = (
 				83CBBA201A601CBA00E9B192 /* Debug */,
 				83CBBA211A601CBA00E9B192 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F8A8CDFE2CF1C0EA00527D53 /* Build configuration list for PBXNativeTarget "Trinity Watch App" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F8A8CDF82CF1C0EA00527D53 /* Debug */,
+				F8A8CDF92CF1C0EA00527D53 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F8A8CDFF2CF1C0EA00527D53 /* Build configuration list for PBXNativeTarget "Trinity Watch AppTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F8A8CDFA2CF1C0EA00527D53 /* Debug */,
+				F8A8CDFB2CF1C0EA00527D53 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F8A8CE002CF1C0EA00527D53 /* Build configuration list for PBXNativeTarget "Trinity Watch AppUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F8A8CDFC2CF1C0EA00527D53 /* Debug */,
+				F8A8CDFD2CF1C0EA00527D53 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
