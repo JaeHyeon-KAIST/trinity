@@ -4,6 +4,7 @@ import WatchKit
 struct ContentView: View {
     @StateObject private var heartRateMonitor = HeartRateMonitor()
     @StateObject private var phoneConnector: PhoneConnector
+    @Environment(\.scenePhase) var scenePhase
     
     init() {
         let monitor = HeartRateMonitor()
