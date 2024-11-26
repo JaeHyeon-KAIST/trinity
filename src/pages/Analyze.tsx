@@ -7,8 +7,12 @@ import {
   Alert,
   View,
   ScrollView,
+  AppState,
+  Platform,
 } from 'react-native';
 import {watchEvents, sendMessage} from 'react-native-watch-connectivity';
+import BackgroundTimer from 'react-native-background-timer';
+import RNBackgroundFetch from 'react-native-background-fetch';
 
 interface HeartRateData {
   timestamp: number;
@@ -23,6 +27,16 @@ interface Statistics {
   minHeartRate: number;
 }
 
+interface WatchMessage {
+  heartRate?: number;
+  monitoringState?: boolean;
+  status?: string;
+  heartRateData?: {
+    heartRate: number;
+    timestamp: number;
+  };
+}
+
 export default function Analyze() {
   const [heartRate, setHeartRate] = useState<string | null>(null);
   const [watchStatus, setWatchStatus] = useState<string>('Disconnected');
@@ -31,38 +45,177 @@ export default function Analyze() {
   const [sessionStats, setSessionStats] = useState<Statistics | null>(null);
   const [recentData, setRecentData] = useState<HeartRateData[]>([]);
 
-  // 심박수 데이터를 저장할 배열
   const heartRateDataRef = useRef<HeartRateData[]>([]);
-  // 모니터링 시작 시간
   const startTimeRef = useRef<number | null>(null);
+  const appStateRef = useRef(AppState.currentState);
+  const backgroundTaskRef = useRef<number | null>(null);
 
+  // 워치 연결 상태 확인 함수
+  const checkWatchConnection = async () => {
+    try {
+      await sendMessage(
+        {command: 'checkConnection'},
+        reply => {
+          if (reply.status === 'connected') {
+            setWatchStatus('Connected');
+          }
+        },
+        error => {
+          console.log('Watch connection check failed:', error);
+          setWatchStatus('Disconnected');
+        },
+      );
+    } catch (error) {
+      console.log('Watch connection check failed:', error);
+      setWatchStatus('Disconnected');
+    }
+  };
+
+  // 백그라운드 작업 설정
+  const setupBackgroundTask = async () => {
+    try {
+      // Configure background fetch
+      await RNBackgroundFetch.configure(
+        {
+          minimumFetchInterval: 15, // 15분
+          stopOnTerminate: false,
+          enableHeadless: true,
+          startOnBoot: true,
+          requiredNetworkType: RNBackgroundFetch.NETWORK_TYPE_NONE,
+          requiresCharging: false,
+          requiresDeviceIdle: false,
+          requiresBatteryNotLow: false,
+        },
+        async taskId => {
+          console.log('[BackgroundFetch] Received task:', taskId);
+          if (isMonitoring) {
+            await checkWatchConnection();
+            // 데이터 동기화 로직 추가
+            await syncHeartRateData();
+          }
+          RNBackgroundFetch.finish(taskId);
+        },
+        error => {
+          console.log('[BackgroundFetch] Failed to configure:', error);
+        },
+      );
+
+      // Start background fetch
+      await RNBackgroundFetch.start();
+    } catch (error) {
+      console.log('Failed to setup background task:', error);
+    }
+  };
+
+  // 워치 연결 유지
+  const keepWatchConnection = () => {
+    if (Platform.OS === 'ios') {
+      // Start background timer
+      BackgroundTimer.runBackgroundTimer(() => {
+        if (isMonitoring) {
+          checkWatchConnection();
+          syncHeartRateData();
+        }
+      }, 1000);
+
+      // Setup background fetch if not already configured
+      setupBackgroundTask();
+    }
+  };
+
+  // 데이터 동기화
+  const syncHeartRateData = async () => {
+    try {
+      await sendMessage(
+        {command: 'syncData'},
+        (reply: WatchMessage) => {
+          if (reply.heartRateData) {
+            const heartRateData: HeartRateData = {
+              timestamp: Date.now(),
+              heartRate: Number(reply.heartRateData.heartRate),
+            };
+            handleNewHeartRateData(heartRateData);
+          }
+        },
+        error => {
+          console.log('Data sync failed:', error);
+        },
+      );
+    } catch (error) {
+      console.log('Failed to sync data:', error);
+    }
+  };
+
+  // 새로운 심박수 데이터 처리
+  const handleNewHeartRateData = (newData: HeartRateData) => {
+    if (isMonitoring && startTimeRef.current) {
+      heartRateDataRef.current.push(newData);
+      setRecentData(prev => [...prev, newData].slice(-5));
+      setHeartRate(`${newData.heartRate} bpm`);
+
+      // 백그라운드에서 데이터 로깅
+      console.log(
+        `Background heart rate data: ${newData.heartRate} at ${new Date(
+          newData.timestamp,
+        ).toLocaleTimeString()}`,
+      );
+    }
+  };
+
+  // 앱 상태 변경 감지
   useEffect(() => {
-    const unsubscribeMessage = watchEvents.on('message', (message: any) => {
-      if (message.heartRate) {
-        const currentHeartRate = message.heartRate;
-        setHeartRate(`${currentHeartRate} bpm`);
-
-        // 모니터링 중일 때만 데이터 저장
-        if (isMonitoring && startTimeRef.current) {
-          const newData = {
-            timestamp: Date.now(),
-            heartRate: currentHeartRate,
-          };
-          heartRateDataRef.current.push(newData);
-
-          // 최근 데이터 업데이트 (최근 5개만 표시)
-          setRecentData(prev => [...prev, newData].slice(-5));
+    const subscription = AppState.addEventListener('change', nextAppState => {
+      if (
+        appStateRef.current.match(/inactive|background/) &&
+        nextAppState === 'active'
+      ) {
+        console.log('App has come to the foreground!');
+        if (isMonitoring) {
+          checkWatchConnection();
+          syncHeartRateData();
+        }
+      } else if (
+        appStateRef.current === 'active' &&
+        nextAppState.match(/inactive|background/)
+      ) {
+        console.log('App has gone to the background!');
+        if (isMonitoring) {
+          keepWatchConnection();
         }
       }
-      if (message.monitoringState !== undefined) {
-        setIsMonitoring(message.monitoringState);
+      appStateRef.current = nextAppState;
+    });
+
+    // Cleanup function
+    return () => {
+      subscription.remove();
+      if (backgroundTaskRef.current) {
+        BackgroundTimer.stopBackgroundTimer();
+        RNBackgroundFetch.stop();
+      }
+    };
+  }, [isMonitoring]);
+
+  // 워치 이벤트 구독
+  // 워치 이벤트 구독 부분 수정
+  useEffect(() => {
+    const unsubscribeMessage = watchEvents.on('message', (message, reply) => {
+      if ('heartRate' in message) {
+        const heartRateData: HeartRateData = {
+          timestamp: Date.now(),
+          heartRate: Number(message.heartRate),
+        };
+        handleNewHeartRateData(heartRateData);
+      }
+      if ('monitoringState' in message) {
+        setIsMonitoring(Boolean(message.monitoringState));
         setIsLoading(false);
       }
     });
 
     const unsubscribeReachability = watchEvents.on(
       'reachability',
-      (reachable: boolean) => {
+      reachable => {
         setWatchStatus(reachable ? 'Connected' : 'Disconnected');
       },
     );
@@ -71,7 +224,7 @@ export default function Analyze() {
       unsubscribeMessage();
       unsubscribeReachability();
     };
-  }, [isMonitoring]);
+  }, [handleNewHeartRateData]);
 
   const startMonitoring = () => {
     if (watchStatus === 'Connected') {
@@ -87,6 +240,7 @@ export default function Analyze() {
           if (reply.status === 'success') {
             console.log('Start monitoring command sent and confirmed.');
             setIsMonitoring(true);
+            keepWatchConnection();
           } else {
             Alert.alert('Error', 'Watch failed to start monitoring.');
           }
@@ -117,16 +271,6 @@ export default function Analyze() {
               ? Math.floor((Date.now() - startTimeRef.current) / 1000)
               : 0;
 
-            console.log('=== Heart Rate Monitoring Session Summary ===');
-            console.log(`Duration: ${sessionDuration} seconds`);
-            console.log(
-              `Total measurements: ${heartRateDataRef.current.length}`,
-            );
-            console.log(
-              'Data:',
-              JSON.stringify(heartRateDataRef.current, null, 2),
-            );
-
             if (heartRateDataRef.current.length > 0) {
               const heartRates = heartRateDataRef.current.map(
                 data => data.heartRate,
@@ -145,15 +289,12 @@ export default function Analyze() {
               };
 
               setSessionStats(stats);
-
-              console.log('=== Statistics ===');
-              console.log(`Average Heart Rate: ${avgHeartRate.toFixed(1)} bpm`);
-              console.log(`Maximum Heart Rate: ${maxHeartRate} bpm`);
-              console.log(`Minimum Heart Rate: ${minHeartRate} bpm`);
             }
 
+            // Cleanup
             startTimeRef.current = null;
             heartRateDataRef.current = [];
+            BackgroundTimer.stopBackgroundTimer();
           } else {
             Alert.alert('Error', 'Watch failed to stop monitoring.');
           }
@@ -201,7 +342,7 @@ export default function Analyze() {
         {isMonitoring && recentData.length > 0 && (
           <View style={styles.dataContainer}>
             <Text style={styles.sectionTitle}>Recent Measurements</Text>
-            {recentData.map((data, index) => (
+            {recentData.map((data, _) => (
               <Text key={data.timestamp} style={styles.dataText}>
                 {new Date(data.timestamp).toLocaleTimeString()}:{' '}
                 {data.heartRate} bpm
