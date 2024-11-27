@@ -9,6 +9,8 @@ import SwiftUI
 
 @main
 struct Trinity_Watch_AppApp: App {
+    @WKExtensionDelegateAdaptor(ExtensionDelegate.self) var extensionDelegate
+  
     var body: some Scene {
         WindowGroup {
             ContentView()

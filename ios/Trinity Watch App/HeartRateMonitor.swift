@@ -15,7 +15,8 @@ final class HeartRateMonitor: NSObject, ObservableObject {
     
     private func requestAuthorization() {
         // HealthKit 권한 요청
-        let typesToShare: Set = [HKObjectType.workoutType()]
+        let typesToShare: Set = [HKObjectType.workoutType(),
+                               HKObjectType.quantityType(forIdentifier: .heartRate)!]
         let typesToRead: Set = [HKObjectType.quantityType(forIdentifier: .heartRate)!]
         
         healthStore.requestAuthorization(toShare: typesToShare, read: typesToRead) { success, error in
@@ -38,6 +39,14 @@ final class HeartRateMonitor: NSObject, ObservableObject {
         do {
             let session = try HKWorkoutSession(healthStore: healthStore, configuration: configuration)
             let builder = session.associatedWorkoutBuilder()
+            
+            // 워크아웃 빌더에 심박수 데이터 타입 추가
+            let dataSource = HKLiveWorkoutDataSource(
+                healthStore: healthStore,
+                workoutConfiguration: configuration
+            )
+            
+            builder.dataSource = dataSource;
             
             // 워크아웃 세션 시작
             session.startActivity(with: Date())
@@ -87,39 +96,54 @@ final class HeartRateMonitor: NSObject, ObservableObject {
             activeQuery = nil
         }
         
+        guard let builder = workoutBuilder else { return }
+        
         // 워크아웃 세션 종료
         workoutSession?.end()
-        workoutBuilder?.endCollection(withEnd: Date()) { success, error in
+        builder.endCollection(withEnd: Date()) { [weak self] success, error in
             guard success else {
                 print("Failed to end collection: \(String(describing: error))")
                 return
             }
             
-            self.workoutBuilder?.finishWorkout { _, error in
-                if let error = error {
-                    print("Failed to finish workout: \(error)")
+            builder.finishWorkout { (workout, error) in
+                guard let workout = workout else {
+                    print("Failed to finish workout: \(String(describing: error))")
+                    return
+                }
+                
+                print("Finished workout: \(workout)")
+            }
+            
+            // 백그라운드 딜리버리 비활성화
+            if let heartRateType = HKObjectType.quantityType(forIdentifier: .heartRate) {
+                self?.healthStore.disableBackgroundDelivery(for: heartRateType) { success, error in
+                    if let error = error {
+                        print("Failed to disable background delivery: \(error)")
+                    }
                 }
             }
+            
+            self?.workoutSession = nil
+            self?.workoutBuilder = nil
         }
-        
-        // 백그라운드 딜리버리 비활성화
-        if let heartRateType = HKObjectType.quantityType(forIdentifier: .heartRate) {
-            healthStore.disableBackgroundDelivery(for: heartRateType) { success, error in
-                if let error = error {
-                    print("Failed to disable background delivery: \(error)")
-                }
-            }
-        }
-        
-        workoutSession = nil
-        workoutBuilder = nil
     }
 
     private func process(samples: [HKSample]?, onHeartRateUpdated: @escaping (Double) -> Void) {
         guard let samples = samples as? [HKQuantitySample] else { return }
         guard let latestSample = samples.last else { return }
-
+        
         let heartRate = latestSample.quantity.doubleValue(for: HKUnit(from: "count/min"))
+        
+        // 워크아웃 빌더에 심박수 데이터 추가
+        if let builder = workoutBuilder {
+            builder.add([latestSample]) { success, error in
+                if !success {
+                    print("Failed to add heart rate samples to workout: \(String(describing: error))")
+                }
+            }
+        }
+        
         DispatchQueue.main.async {
             self.heartRate = heartRate
             onHeartRateUpdated(heartRate)
