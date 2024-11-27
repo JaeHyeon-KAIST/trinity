@@ -10,29 +10,80 @@ final class HeartRateMonitor: NSObject, ObservableObject {
     
     override init() {
         super.init()
-        requestAuthorization()
     }
-    
-    private func requestAuthorization() {
-        // HealthKit 권한 요청
-        let typesToShare: Set = [HKObjectType.workoutType(),
-                               HKObjectType.quantityType(forIdentifier: .heartRate)!]
-        let typesToRead: Set = [HKObjectType.quantityType(forIdentifier: .heartRate)!]
+  
+    // Method to check if HealthKit is available
+    private func isHealthDataAvailable() -> Bool {
+        return HKHealthStore.isHealthDataAvailable()
+    }
+  
+    // Method to check current authorization status
+    private func checkAuthorizationStatus(completion: @escaping (Bool) -> Void) {
+        guard let heartRateType = HKObjectType.quantityType(forIdentifier: .heartRate) else {
+            completion(false)
+            return
+        }
+        let status = healthStore.authorizationStatus(for: heartRateType)
+        switch status {
+        case .sharingAuthorized:
+            completion(true)
+        default:
+            completion(false)
+        }
+    }
+  
+    // Modify startHeartRateMonitoring to include authorization check
+    func startHeartRateMonitoring(onHeartRateUpdated: @escaping (Double) -> Void) {
+        guard isHealthDataAvailable() else {
+            print("Health data not available.")
+            return
+        }
         
-        healthStore.requestAuthorization(toShare: typesToShare, read: typesToRead) { success, error in
-            if !success {
-                print("Authorization failed: \(String(describing: error))")
+        checkAuthorizationStatus { [weak self] authorized in
+            guard let self = self else { return }
+            if authorized {
+                // Start monitoring directly
+                self.beginHeartRateMonitoring(onHeartRateUpdated: onHeartRateUpdated)
+            } else {
+                // Request authorization first
+                self.requestAuthorization { success in
+                    if success {
+                        // Start monitoring after authorization is granted
+                        self.beginHeartRateMonitoring(onHeartRateUpdated: onHeartRateUpdated)
+                    } else {
+                        print("HealthKit authorization failed.")
+                    }
+                }
             }
         }
     }
+  
+    // Updated requestAuthorization method with completion handler
+    private func requestAuthorization(completion: @escaping (Bool) -> Void) {
+        let typesToShare: Set = [
+            HKObjectType.workoutType(),
+            HKObjectType.quantityType(forIdentifier: .heartRate)!
+        ]
+        let typesToRead: Set = [
+            HKObjectType.quantityType(forIdentifier: .heartRate)!
+        ]
+        
+        healthStore.requestAuthorization(toShare: typesToShare, read: typesToRead) { success, error in
+            if let error = error {
+                print("Authorization failed: \(error.localizedDescription)")
+            }
+            completion(success)
+        }
+    }
 
-    func startHeartRateMonitoring(onHeartRateUpdated: @escaping (Double) -> Void) {
+    // Separated method to begin heart rate monitoring
+    private func beginHeartRateMonitoring(onHeartRateUpdated: @escaping (Double) -> Void) {
         guard let heartRateType = HKObjectType.quantityType(forIdentifier: .heartRate) else {
             print("Heart rate type unavailable.")
             return
         }
 
-        // 워크아웃 세션 설정
+        // Workout session configuration remains the same
         let configuration = HKWorkoutConfiguration()
         configuration.activityType = .other
         
@@ -40,18 +91,15 @@ final class HeartRateMonitor: NSObject, ObservableObject {
             let session = try HKWorkoutSession(healthStore: healthStore, configuration: configuration)
             let builder = session.associatedWorkoutBuilder()
             
-            // 워크아웃 빌더에 심박수 데이터 타입 추가
             let dataSource = HKLiveWorkoutDataSource(
                 healthStore: healthStore,
                 workoutConfiguration: configuration
             )
+            builder.dataSource = dataSource
             
-            builder.dataSource = dataSource;
-            
-            // 워크아웃 세션 시작
             session.startActivity(with: Date())
             builder.beginCollection(withStart: Date()) { success, error in
-                guard success else {
+                if !success {
                     print("Failed to begin collection: \(String(describing: error))")
                     return
                 }
@@ -60,7 +108,6 @@ final class HeartRateMonitor: NSObject, ObservableObject {
             self.workoutSession = session
             self.workoutBuilder = builder
             
-            // 심박수 쿼리 설정
             let query = HKAnchoredObjectQuery(
                 type: heartRateType,
                 predicate: nil,
@@ -77,7 +124,7 @@ final class HeartRateMonitor: NSObject, ObservableObject {
             healthStore.execute(query)
             activeQuery = query
             
-            // 백그라운드 딜리버리 활성화
+            // Enable background delivery
             healthStore.enableBackgroundDelivery(for: heartRateType, frequency: .immediate) { success, error in
                 if let error = error {
                     print("Failed to enable background delivery: \(error)")

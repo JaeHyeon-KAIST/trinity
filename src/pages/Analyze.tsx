@@ -208,8 +208,46 @@ export default function Analyze() {
         handleNewHeartRateData(heartRateData);
       }
       if ('monitoringState' in message) {
-        setIsMonitoring(Boolean(message.monitoringState));
-        setIsLoading(false);
+        const monitoringState = Boolean(message.monitoringState);
+
+        if (monitoringState != isMonitoring) {
+          setIsMonitoring(monitoringState);
+          if (monitoringState) {
+            // Monitoring has started from the Watch
+            startTimeRef.current = Date.now();
+            heartRateDataRef.current = [];
+            setRecentData([]);
+            setSessionStats(null);
+          } else {
+            // Monitoring has stopped
+            const sessionDuration = startTimeRef.current
+              ? Math.floor((Date.now() - startTimeRef.current) / 1000)
+              : 0;
+            if (heartRateDataRef.current.length > 0) {
+              const heartRates = heartRateDataRef.current.map(
+                data => data.heartRate,
+              );
+              const avgHeartRate =
+                heartRates.reduce((a, b) => a + b) / heartRates.length;
+              const maxHeartRate = Math.max(...heartRates);
+              const minHeartRate = Math.min(...heartRates);
+
+              const stats: Statistics = {
+                duration: sessionDuration,
+                totalMeasurements: heartRateDataRef.current.length,
+                avgHeartRate: parseFloat(avgHeartRate.toFixed(1)),
+                maxHeartRate,
+                minHeartRate,
+              };
+
+              setSessionStats(stats);
+            }
+
+            startTimeRef.current = null;
+            heartRateDataRef.current = [];
+          }
+          setIsLoading(false);
+        }
       }
     });
 
@@ -310,6 +348,8 @@ export default function Analyze() {
       Alert.alert('Error', 'Watch is not connected.');
     }
   };
+
+  console.log(isMonitoring, recentData, sessionStats);
 
   return (
     <SafeAreaView style={styles.container}>
