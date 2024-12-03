@@ -7,7 +7,7 @@ type ContainerProps = {
   fullWidth?: boolean; // Whether the component spans full width
 };
 
-export default function HomeComponent({
+export default function HomeDetailPageContainer({
   title,
   children,
   fullWidth,
@@ -30,7 +30,7 @@ const styles = StyleSheet.create({
   container: {
     borderWidth: 1.5,
     borderColor: '#003D08',
-    borderRadius: 10,
+    borderRadius: 20,
     marginHorizontal: 6,
     height: 180, // Fixed height for all components
     width: '48%', // Default to half width
