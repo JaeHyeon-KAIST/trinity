@@ -2,15 +2,14 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import {StyleSheet, Text, View} from 'react-native';
 import Health from '../components/Home/Health.tsx';
 import HomeComponent from '../components/Home/HomeComponent.tsx';
+import WeatherComponent from '../components/Home/WeatherComponent.tsx';
 
 export default function Home() {
   return (
     <SafeAreaView style={styles.container}>
       {/* Single Component: Full Width */}
       <HomeComponent title="기상정보" fullWidth>
-        <View>
-          <Text>기상정보</Text>
-        </View>
+        <WeatherComponent />
       </HomeComponent>
 
       {/* Two Components in a Row: Equal Width */}
