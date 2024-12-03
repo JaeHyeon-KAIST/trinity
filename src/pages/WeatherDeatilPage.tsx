@@ -4,7 +4,7 @@ import HomeDetailPageContainer from '../components/Home/HomeDetailPage.tsx';
 
 export default function WeatherDetailPage() {
   return (
-    <SafeAreaView>
+    <SafeAreaView style={{backgroundColor: '#F4FDED'}}>
       <HomeDetailPageContainer title="기상 정보">
         <View>
           <Text>기상 정보</Text>

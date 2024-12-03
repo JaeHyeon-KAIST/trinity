@@ -3,6 +3,7 @@ import {StyleSheet, Text, View} from 'react-native';
 import Health from '../components/Home/Health.tsx';
 import HomeDetailPageContainer from '../components/Home/HomeDetailPageContainer.tsx';
 import WeatherComponent from '../components/Home/WeatherComponent.tsx';
+import Remark from '../components/Home/Remark.tsx';
 
 export default function Home() {
   return (
@@ -15,9 +16,7 @@ export default function Home() {
       {/* Two Components in a Row: Equal Width */}
       <View style={styles.row}>
         <HomeDetailPageContainer title="특이사항">
-          <View>
-            <Text>병충해를 감지하였습니다.</Text>
-          </View>
+          <Remark />
         </HomeDetailPageContainer>
         <HomeDetailPageContainer title="건강">
           <Health />
@@ -31,7 +30,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
-    backgroundColor: '#fff',
+    backgroundColor: '#F4FDED',
     paddingHorizontal: 8,
   },
   row: {
