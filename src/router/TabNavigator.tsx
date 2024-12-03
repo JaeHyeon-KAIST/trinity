@@ -33,6 +33,7 @@ export default function TabNavigator() {
   return (
     <>
       <Bottom.Navigator
+        initialRouteName={'Home'}
         screenOptions={{
           tabBarShowLabel: false, // 텍스트 숨기기
           headerShown: false,
