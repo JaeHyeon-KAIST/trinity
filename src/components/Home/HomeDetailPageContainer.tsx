@@ -1,19 +1,28 @@
 import React from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {NavigationProp, useNavigation} from '@react-navigation/native';
+import {RootStackParamList} from '../../router/Router.tsx';
 
 type ContainerProps = {
   title: string; // Title of the section (e.g., "기상 정보", "특이사항")
   children: React.ReactNode; // Child components (e.g., <Health />)
+  direction?: keyof RootStackParamList; // Navigation direction (e.g., "WeatherDetail")
   fullWidth?: boolean; // Whether the component spans full width
 };
 
 export default function HomeDetailPageContainer({
   title,
   children,
+  direction,
   fullWidth,
 }: ContainerProps) {
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+
   return (
-    <View style={[styles.container, fullWidth && styles.fullWidth]}>
+    <TouchableOpacity
+      style={[styles.container, fullWidth && styles.fullWidth]}
+      activeOpacity={1}
+      onPress={() => direction && navigation.navigate(direction)}>
       {/* Section Title */}
       <Text style={styles.title}>{title}</Text>
 
@@ -22,7 +31,7 @@ export default function HomeDetailPageContainer({
 
       {/* Child Components */}
       <View style={styles.content}>{children}</View>
-    </View>
+    </TouchableOpacity>
   );
 }
 

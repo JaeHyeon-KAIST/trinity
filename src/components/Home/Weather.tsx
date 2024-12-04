@@ -7,14 +7,11 @@ import CloudySVG from '../../assets/icon/cloudy.svg';
 import {NavigationProp, useNavigation} from '@react-navigation/native';
 import {RootStackParamList} from '../../router/Router.tsx';
 
-export default function WeatherComponent() {
+export default function Weather() {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
   return (
-    <TouchableOpacity
-      style={styles.container}
-      activeOpacity={1}
-      onPress={() => navigation.navigate('WeatherDetail')}>
+    <View style={styles.container}>
       {/* Left Section: Current Weather */}
       <View style={styles.leftSection}>
         <CloudySVG width={110} height={110} />
@@ -71,7 +68,7 @@ export default function WeatherComponent() {
           </View>
         </View>
       </View>
-    </TouchableOpacity>
+    </View>
   );
 }
 

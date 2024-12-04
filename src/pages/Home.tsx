@@ -1,21 +1,24 @@
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import Health from '../components/Home/Health.tsx';
 import HomeDetailPageContainer from '../components/Home/HomeDetailPageContainer.tsx';
-import WeatherComponent from '../components/Home/WeatherComponent.tsx';
+import Weather from '../components/Home/Weather.tsx';
 import Remark from '../components/Home/Remark.tsx';
 
 export default function Home() {
   return (
     <SafeAreaView style={styles.container}>
       {/* Single Component: Full Width */}
-      <HomeDetailPageContainer title="기상정보" fullWidth>
-        <WeatherComponent />
+      <HomeDetailPageContainer
+        title="기상정보"
+        direction={'WeatherDetail'}
+        fullWidth>
+        <Weather />
       </HomeDetailPageContainer>
 
       {/* Two Components in a Row: Equal Width */}
       <View style={styles.row}>
-        <HomeDetailPageContainer title="특이사항">
+        <HomeDetailPageContainer title="특이사항" direction={'RemarkDetail'}>
           <Remark />
         </HomeDetailPageContainer>
         <HomeDetailPageContainer title="건강">

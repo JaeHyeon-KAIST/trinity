@@ -1,5 +1,7 @@
 import React from 'react';
 import {StyleSheet, Text, TextStyle, View} from 'react-native';
+import {NavigationProp, useNavigation} from '@react-navigation/native';
+import {RootStackParamList} from '../../router/Router.tsx';
 
 // WordBreakKeepAllText Component
 const WordBreakKeepAllText = ({
