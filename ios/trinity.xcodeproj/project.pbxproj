@@ -16,6 +16,8 @@
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		94920061B277CB7E857037B8 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 7DDE10D21BCE5393DB3100CB /* PrivacyInfo.xcprivacy */; };
 		A18AD357F5018A37D92CD800 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */; };
+		F80119062D00AB3E00EE1F4F /* WeatherKitModule.m in Sources */ = {isa = PBXBuildFile; fileRef = F80119052D00AB3E00EE1F4F /* WeatherKitModule.m */; };
+		F80119102D00AE4900EE1F4F /* WeatherKitModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = F801190F2D00AE4900EE1F4F /* WeatherKitModule.swift */; };
 		F8A8CDF62CF1C0EA00527D53 /* Trinity Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = F8A8CDD32CF1C0E800527D53 /* Trinity Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
@@ -94,6 +96,10 @@
 		AE95921691C72702FABD78B5 /* Pods-trinity.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-trinity.release.xcconfig"; path = "Target Support Files/Pods-trinity/Pods-trinity.release.xcconfig"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		F3B6B60052C014E0E75AE458 /* libPods-trinity-trinityTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-trinity-trinityTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		F80119042D00AAF200EE1F4F /* WeatherKitModule.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WeatherKitModule.h; sourceTree = "<group>"; };
+		F80119052D00AB3E00EE1F4F /* WeatherKitModule.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WeatherKitModule.m; sourceTree = "<group>"; };
+		F801190E2D00AE4900EE1F4F /* trinity-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "trinity-Bridging-Header.h"; sourceTree = "<group>"; };
+		F801190F2D00AE4900EE1F4F /* WeatherKitModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherKitModule.swift; sourceTree = "<group>"; };
 		F8A8CDCE2CF191BD00527D53 /* trinity.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = trinity.entitlements; path = trinity/trinity.entitlements; sourceTree = "<group>"; };
 		F8A8CDD32CF1C0E800527D53 /* Trinity Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Trinity Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F8A8CDE22CF1C0EA00527D53 /* Trinity Watch AppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Trinity Watch AppTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -105,22 +111,16 @@
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		F8A8CDD42CF1C0E800527D53 /* Trinity Watch App */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-			);
 			path = "Trinity Watch App";
 			sourceTree = "<group>";
 		};
 		F8A8CDE52CF1C0EA00527D53 /* Trinity Watch AppTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-			);
 			path = "Trinity Watch AppTests";
 			sourceTree = "<group>";
 		};
 		F8A8CDEF2CF1C0EA00527D53 /* Trinity Watch AppUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-			);
 			path = "Trinity Watch AppUITests";
 			sourceTree = "<group>";
 		};
@@ -206,6 +206,10 @@
 				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
 				13B07FB71A68108700A75B9A /* main.m */,
 				13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */,
+				F80119042D00AAF200EE1F4F /* WeatherKitModule.h */,
+				F801190F2D00AE4900EE1F4F /* WeatherKitModule.swift */,
+				F80119052D00AB3E00EE1F4F /* WeatherKitModule.m */,
+				F801190E2D00AE4900EE1F4F /* trinity-Bridging-Header.h */,
 			);
 			name = trinity;
 			sourceTree = "<group>";
@@ -384,7 +388,7 @@
 						TestTargetID = 13B07F861A680F5B00A75B9A;
 					};
 					13B07F861A680F5B00A75B9A = {
-						LastSwiftMigration = 1120;
+						LastSwiftMigration = 1610;
 					};
 					F8A8CDD22CF1C0E800527D53 = {
 						CreatedOnToolsVersion = 16.1;
@@ -608,7 +612,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */,
+				F80119062D00AB3E00EE1F4F /* WeatherKitModule.m in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
+				F80119102D00AE4900EE1F4F /* WeatherKitModule.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -664,12 +670,13 @@
 			baseConfigurationReference = 99F7A40BE74381F33D9E82DB /* Pods-trinity-trinityTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				DEVELOPMENT_TEAM = F46QD2GBLQ;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = trinityTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -692,8 +699,9 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COPY_PHASE_STRIP = NO;
+				DEVELOPMENT_TEAM = F46QD2GBLQ;
 				INFOPLIST_FILE = trinityTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -722,7 +730,7 @@
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = trinity/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -735,6 +743,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.jaehyeon.trinity;
 				PRODUCT_NAME = trinity;
+				SWIFT_OBJC_BRIDGING_HEADER = "trinity-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -752,7 +761,7 @@
 				DEVELOPMENT_TEAM = F46QD2GBLQ;
 				INFOPLIST_FILE = trinity/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -765,6 +774,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.jaehyeon.trinity;
 				PRODUCT_NAME = trinity;
+				SWIFT_OBJC_BRIDGING_HEADER = "trinity-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -843,10 +853,7 @@
 					"-DFOLLY_CFG_NO_COROUTINES=1",
 					"-DFOLLY_HAVE_CLOCK_GETTIME=1",
 				);
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					" ",
-				);
+				OTHER_LDFLAGS = "$(inherited)  ";
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) DEBUG";
@@ -919,10 +926,7 @@
 					"-DFOLLY_CFG_NO_COROUTINES=1",
 					"-DFOLLY_HAVE_CLOCK_GETTIME=1",
 				);
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					" ",
-				);
+				OTHER_LDFLAGS = "$(inherited)  ";
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				USE_HERMES = true;
