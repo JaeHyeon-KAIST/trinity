@@ -26,6 +26,7 @@
     "react-native": "^0.75.4",
     "react-native-background-fetch": "^4.2.5",
     "react-native-background-timer": "^2.4.1",
+    "react-native-dotenv": "^3.4.11",
     "react-native-geolocation-service": "^5.3.1",
     "react-native-gesture-handler": "^2.21.2",
     "react-native-health": "^1.19.0",
