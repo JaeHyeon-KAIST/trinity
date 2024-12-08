@@ -11,6 +11,7 @@ const DummyWorkList = [
     done: false,
   },
   {id: 4, info: '할일 4', done: true},
+  {id: 5, info: '할일 5', done: false},
 ];
 
 const SWIPE_THRESHOLD = -100;
