@@ -21,7 +21,7 @@ export default function Home() {
         <HomeDetailPageContainer title="특이사항" direction={'RemarkDetail'}>
           <Remark />
         </HomeDetailPageContainer>
-        <HomeDetailPageContainer title="건강">
+        <HomeDetailPageContainer title="건강" direction={'HealthDetail'}>
           <Health />
         </HomeDetailPageContainer>
       </View>
