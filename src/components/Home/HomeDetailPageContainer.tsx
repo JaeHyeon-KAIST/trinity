@@ -8,6 +8,8 @@ type ContainerProps = {
   children: React.ReactNode; // Child components (e.g., <Health />)
   direction?: keyof RootStackParamList; // Navigation direction (e.g., "WeatherDetail")
   fullWidth?: boolean; // Whether the component spans full width
+  tailText?: string; // Text at the end of the section
+  customHeight?: number; // Custom height for the component
 };
 
 export default function HomeDetailPageContainer({
@@ -15,16 +17,29 @@ export default function HomeDetailPageContainer({
   children,
   direction,
   fullWidth,
+  tailText,
+  customHeight,
 }: ContainerProps) {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
   return (
     <TouchableOpacity
-      style={[styles.container, fullWidth && styles.fullWidth]}
+      style={[
+        styles.container,
+        fullWidth && styles.fullWidth,
+        customHeight !== undefined && {height: customHeight},
+      ]}
       activeOpacity={1}
       onPress={() => direction && navigation.navigate(direction)}>
       {/* Section Title */}
-      <Text style={styles.title}>{title}</Text>
+      {tailText ? (
+        <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+          <Text style={styles.title}>{title}</Text>
+          <Text style={styles.title}>{tailText}</Text>
+        </View>
+      ) : (
+        <Text style={styles.title}>{title}</Text>
+      )}
 
       {/* Divider */}
       <View style={styles.divider} />

@@ -1,8 +1,15 @@
 import {Message, Role} from '../../utils/Interfaces';
-import {Image, StyleSheet, Text, View} from 'react-native';
+import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {NavigationProp, useNavigation} from '@react-navigation/native';
+import {BottomTabParamList} from '../../router/TabNavigator.tsx';
 
-export default function ChatMessage({content, role}: Message) {
+interface ChatMessageProps extends Message {
+  isLast: boolean; // isLast 프로퍼티 추가
+}
+
+export default function ChatMessage({content, role, isLast}: ChatMessageProps) {
   const isUser = role === Role.User;
+  const navigation = useNavigation<NavigationProp<BottomTabParamList>>();
 
   if (isUser) {
     return (
@@ -21,17 +28,43 @@ export default function ChatMessage({content, role}: Message) {
   }
 
   return (
-    <View style={styles.botContainer}>
-      <View style={styles.botAvatar}>
-        <Image
-          style={styles.btnImage}
-          source={require('../../assets/icon/trinity.png')}
-        />
-      </View>
-      <View style={styles.botBubble}>
-        <Text style={styles.botText}>{content}</Text>
-      </View>
-    </View>
+    <>
+      {isLast ? (
+        <View>
+          <View style={styles.botContainer}>
+            <View style={styles.botAvatar}>
+              <Image
+                style={styles.btnImage}
+                source={require('../../assets/icon/trinity.png')}
+              />
+            </View>
+            <View style={styles.botBubble}>
+              <Text style={styles.botText}>{content}</Text>
+            </View>
+          </View>
+          <View style={styles.buttonWrapper}>
+            <TouchableOpacity
+              onPress={() => navigation.navigate('Connect')}
+              style={styles.buttonContainer}
+              activeOpacity={0.7}>
+              <Text style={styles.buttonText}>전문가를 연결하시겠습니까?</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      ) : (
+        <View style={styles.botContainer}>
+          <View style={styles.botAvatar}>
+            <Image
+              style={styles.btnImage}
+              source={require('../../assets/icon/trinity.png')}
+            />
+          </View>
+          <View style={styles.botBubble}>
+            <Text style={styles.botText}>{content}</Text>
+          </View>
+        </View>
+      )}
+    </>
   );
 }
 
@@ -86,5 +119,26 @@ const styles = StyleSheet.create({
   botText: {
     color: '#000000',
     fontSize: 16,
+  },
+  buttonWrapper: {
+    alignItems: 'center', // 수평 중앙 정렬
+    justifyContent: 'center', // 수직 중앙 정렬
+    marginTop: 5,
+    marginBottom: 20,
+  },
+  buttonContainer: {
+    backgroundColor: '#E3F2D3',
+    borderWidth: 1,
+    borderColor: '#3C8031',
+    paddingVertical: 12,
+    paddingHorizontal: 25,
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  buttonText: {
+    color: '#003D08',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });

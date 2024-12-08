@@ -43,7 +43,9 @@ export default function MessageInput({onShouldSendMessage}: MessageInputProps) {
 }
 
 const styles = StyleSheet.create({
-  container: {},
+  container: {
+    marginVertical: 5,
+  },
   row: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -53,7 +55,7 @@ const styles = StyleSheet.create({
   messageInput: {
     flex: 1,
     marginHorizontal: 10,
-    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomWidth: 0,
     borderRadius: 20,
     padding: 10,
     borderColor: 'gray',

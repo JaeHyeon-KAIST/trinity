@@ -4,8 +4,12 @@ import Health from '../components/Home/Health.tsx';
 import HomeDetailPageContainer from '../components/Home/HomeDetailPageContainer.tsx';
 import Weather from '../components/Home/Weather.tsx';
 import Remark from '../components/Home/Remark.tsx';
+import WorkList from '../components/Home/WorkList.tsx';
+import {useState} from 'react';
 
 export default function Home() {
+  const [progress, setProgress] = useState(0);
+
   return (
     <SafeAreaView style={styles.container}>
       {/* Single Component: Full Width */}
@@ -15,7 +19,6 @@ export default function Home() {
         fullWidth>
         <Weather />
       </HomeDetailPageContainer>
-
       {/* Two Components in a Row: Equal Width */}
       <View style={styles.row}>
         <HomeDetailPageContainer title="특이사항" direction={'RemarkDetail'}>
@@ -25,6 +28,14 @@ export default function Home() {
           <Health />
         </HomeDetailPageContainer>
       </View>
+
+      <HomeDetailPageContainer
+        title="오늘의 할 일"
+        tailText={`진행도 ${progress}%`}
+        customHeight={320}
+        fullWidth>
+        <WorkList setProgess={setProgress} />
+      </HomeDetailPageContainer>
     </SafeAreaView>
   );
 }

@@ -1,4 +1,10 @@
-import {KeyboardAvoidingView, StyleSheet, Text, View} from 'react-native';
+import {
+  KeyboardAvoidingView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {useState} from 'react';
 import {FlashList} from '@shopify/flash-list';
@@ -190,7 +196,12 @@ export default function Chat() {
         {messages.length === 0 && <Text>대화를 시작해보세요!</Text>}
         <FlashList
           data={messages}
-          renderItem={({item}) => <ChatMessage {...item} />}
+          renderItem={({item, index}) => (
+            <ChatMessage
+              {...item}
+              isLast={index === messages.length - 1 && index > 0}
+            />
+          )}
           estimatedItemSize={400}
           keyboardDismissMode="on-drag"
         />
