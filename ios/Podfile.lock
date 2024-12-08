@@ -1643,8 +1643,6 @@ PODS:
     - React-logger (= 0.75.4)
     - React-perflogger (= 0.75.4)
     - React-utils (= 0.75.4)
-  - ReactNativeOpenAI (0.6.2):
-    - React-Core
   - RNAppleHealthKit (1.7.0):
     - React
   - RNBackgroundFetch (4.2.5):
@@ -1803,7 +1801,6 @@ DEPENDENCIES:
   - React-utils (from `../node_modules/react-native/ReactCommon/react/utils`)
   - ReactCodegen (from `build/generated/ios`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
-  - ReactNativeOpenAI (from `../node_modules/react-native-openai`)
   - RNAppleHealthKit (from `../node_modules/react-native-health`)
   - RNBackgroundFetch (from `../node_modules/react-native-background-fetch`)
   - "RNFBApp (from `../node_modules/@react-native-firebase/app`)"
@@ -1964,8 +1961,6 @@ EXTERNAL SOURCES:
     :path: build/generated/ios
   ReactCommon:
     :path: "../node_modules/react-native/ReactCommon"
-  ReactNativeOpenAI:
-    :path: "../node_modules/react-native-openai"
   RNAppleHealthKit:
     :path: "../node_modules/react-native-health"
   RNBackgroundFetch:
@@ -2066,7 +2061,6 @@ SPEC CHECKSUMS:
   React-utils: d1bae5ac6a5fb94a772ebfc7a7e1aba3a6706a3a
   ReactCodegen: 99b435b58bd874bb0626b3fb16437d2e8735d370
   ReactCommon: 1007c09a406a451ddbd874e51511aa541d6034f6
-  ReactNativeOpenAI: 7fe4cb1f771b5813037096af2ca2e90a2ef5fdc0
   RNAppleHealthKit: 60a6beefdd89a75811e9a8873a5e24f351dee681
   RNBackgroundFetch: 2f800a04434620db15ede2e8f21886608a2d1743
   RNFBApp: 1de631bffe154f4f8b56f8dbfb13d6305d658e97

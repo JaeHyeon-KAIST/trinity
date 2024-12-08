@@ -24,7 +24,7 @@ export default function MessageInput({onShouldSendMessage}: MessageInputProps) {
   };
 
   return (
-    <View>
+    <View style={styles.container}>
       <View style={styles.row}>
         <TextInput
           autoFocus
@@ -35,7 +35,7 @@ export default function MessageInput({onShouldSendMessage}: MessageInputProps) {
           onChangeText={setMessage}
         />
         <TouchableOpacity onPress={onSend}>
-          <Text>전송</Text>
+          <Text>질문</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -43,11 +43,12 @@ export default function MessageInput({onShouldSendMessage}: MessageInputProps) {
 }
 
 const styles = StyleSheet.create({
+  container: {},
   row: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 20,
-    backgroundColor: 'white',
+    paddingLeft: 10,
+    paddingRight: 20,
   },
   messageInput: {
     flex: 1,
