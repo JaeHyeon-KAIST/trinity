@@ -15,6 +15,12 @@ RCT_EXTERN_METHOD(getCurrentWeather:(double)latitude
                      resolver:(RCTPromiseResolveBlock)resolver
                      rejecter:(RCTPromiseRejectBlock)rejecter)
 
+// 오늘의 시간별 날씨 정보 가져오기
+RCT_EXTERN_METHOD(getHourlyWeather:(double)latitude
+                     longitude:(double)longitude
+                     resolver:(RCTPromiseResolveBlock)resolver
+                     rejecter:(RCTPromiseRejectBlock)rejecter)
+
 RCT_EXTERN_METHOD(getWeeklyWeather:(double)latitude
                      longitude:(double)longitude
                      resolver:(RCTPromiseResolveBlock)resolver

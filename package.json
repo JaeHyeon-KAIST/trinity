@@ -35,6 +35,7 @@
     "react-native-screens": "^4.3.0",
     "react-native-svg": "^15.9.0",
     "react-native-svg-transformer": "^1.5.0",
+    "react-native-video": "^6.8.2",
     "react-native-watch-connectivity": "^1.1.0"
   },
   "devDependencies": {

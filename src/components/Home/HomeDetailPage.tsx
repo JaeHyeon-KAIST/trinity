@@ -31,8 +31,8 @@ const styles = StyleSheet.create({
     borderColor: '#003D08',
     borderRadius: 20,
     marginHorizontal: 10,
-    height: '95%', // Fixed height for all components
-    marginBottom: 15,
+    height: '100%', // Fixed height for all components
+    flex: 1,
   },
   title: {
     fontSize: 18,
@@ -48,7 +48,6 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    justifyContent: 'center',
     alignItems: 'center',
   },
 });

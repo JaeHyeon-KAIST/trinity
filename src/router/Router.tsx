@@ -1,6 +1,6 @@
 import {createStackNavigator} from '@react-navigation/stack';
 import TabNavigator from './TabNavigator.tsx';
-import WeatherDetailPage from '../pages/WeatherDeatilPage.tsx';
+import WeatherDetailPage from '../pages/WeatherDetailPage.tsx';
 import RemarkDetailPage from '../pages/RemarkDetailPage.tsx';
 
 const Stack = createStackNavigator<RootStackParamList>();
