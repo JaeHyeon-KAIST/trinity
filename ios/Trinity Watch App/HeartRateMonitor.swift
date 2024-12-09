@@ -3,10 +3,13 @@ import SwiftUI
 
 final class HeartRateMonitor: NSObject, ObservableObject {
     @Published var heartRate: Double?
+    @Published var stepCount: Int = 0
     private let healthStore = HKHealthStore()
     private var activeQuery: HKAnchoredObjectQuery?
+    private var stepQuery: HKQuery?
     private var workoutSession: HKWorkoutSession?
     private var workoutBuilder: HKLiveWorkoutBuilder?
+    private var initialStepCount: Int = 0
     
     override init() {
         super.init()
@@ -19,53 +22,32 @@ final class HeartRateMonitor: NSObject, ObservableObject {
   
     // Method to check current authorization status
     private func checkAuthorizationStatus(completion: @escaping (Bool) -> Void) {
-        guard let heartRateType = HKObjectType.quantityType(forIdentifier: .heartRate) else {
+        guard let heartRateType = HKObjectType.quantityType(forIdentifier: .heartRate),
+              let stepCountType = HKObjectType.quantityType(forIdentifier: .stepCount) else {
             completion(false)
             return
         }
-        let status = healthStore.authorizationStatus(for: heartRateType)
-        switch status {
-        case .sharingAuthorized:
+        
+        let statusHeart = healthStore.authorizationStatus(for: heartRateType)
+        let statusSteps = healthStore.authorizationStatus(for: stepCountType)
+        
+        switch (statusHeart, statusSteps) {
+        case (.sharingAuthorized, .sharingAuthorized):
             completion(true)
         default:
             completion(false)
         }
     }
-  
-    // Modify startHeartRateMonitoring to include authorization check
-    func startHeartRateMonitoring(onHeartRateUpdated: @escaping (Double) -> Void) {
-        guard isHealthDataAvailable() else {
-            print("Health data not available.")
-            return
-        }
-        
-        checkAuthorizationStatus { [weak self] authorized in
-            guard let self = self else { return }
-            if authorized {
-                // Start monitoring directly
-                self.beginHeartRateMonitoring(onHeartRateUpdated: onHeartRateUpdated)
-            } else {
-                // Request authorization first
-                self.requestAuthorization { success in
-                    if success {
-                        // Start monitoring after authorization is granted
-                        self.beginHeartRateMonitoring(onHeartRateUpdated: onHeartRateUpdated)
-                    } else {
-                        print("HealthKit authorization failed.")
-                    }
-                }
-            }
-        }
-    }
-  
-    // Updated requestAuthorization method with completion handler
+    
     private func requestAuthorization(completion: @escaping (Bool) -> Void) {
         let typesToShare: Set = [
             HKObjectType.workoutType(),
-            HKObjectType.quantityType(forIdentifier: .heartRate)!
+            HKObjectType.quantityType(forIdentifier: .heartRate)!,
+            HKObjectType.quantityType(forIdentifier: .stepCount)!
         ]
         let typesToRead: Set = [
-            HKObjectType.quantityType(forIdentifier: .heartRate)!
+            HKObjectType.quantityType(forIdentifier: .heartRate)!,
+            HKObjectType.quantityType(forIdentifier: .stepCount)!
         ]
         
         healthStore.requestAuthorization(toShare: typesToShare, read: typesToRead) { success, error in
@@ -76,14 +58,85 @@ final class HeartRateMonitor: NSObject, ObservableObject {
         }
     }
 
-    // Separated method to begin heart rate monitoring
+    private func startStepCounting() {
+        guard let stepType = HKObjectType.quantityType(forIdentifier: .stepCount) else { return }
+        
+        // Reset step count to 0
+        self.stepCount = 0
+        
+        // Setup real-time step counting query
+        let predicate = HKQuery.predicateForSamples(withStart: Date(), end: nil, options: .strictStartDate)
+        
+        self.stepQuery = HKObserverQuery(sampleType: stepType, predicate: predicate) { [weak self] query, completionHandler, error in
+            guard error == nil else {
+                print("Step counting error: \(error!.localizedDescription)")
+                return
+            }
+            
+            let stepsSampleQuery = HKSampleQuery(sampleType: stepType,
+                                               predicate: predicate,
+                                               limit: HKObjectQueryNoLimit,
+                                               sortDescriptors: nil) { [weak self] _, results, error in
+                guard let samples = results as? [HKQuantitySample],
+                      error == nil else { return }
+                
+                let steps = samples.reduce(0) { $0 + Int($1.quantity.doubleValue(for: HKUnit.count())) }
+                
+                DispatchQueue.main.async {
+                    self?.stepCount = steps
+                }
+            }
+            
+            self?.healthStore.execute(stepsSampleQuery)
+            completionHandler()
+        }
+        
+        if let query = stepQuery {
+            healthStore.execute(query)
+            
+            // Enable background delivery for steps
+            healthStore.enableBackgroundDelivery(for: stepType, frequency: .immediate) { success, error in
+                if let error = error {
+                    print("Failed to enable background delivery for steps: \(error)")
+                }
+            }
+        }
+    }
+
+    func startHeartRateMonitoring(onHeartRateUpdated: @escaping (Double) -> Void, onStepCountUpdated: @escaping (Int) -> Void) {
+        guard isHealthDataAvailable() else {
+            print("Health data not available.")
+            return
+        }
+        
+        checkAuthorizationStatus { [weak self] authorized in
+            guard let self = self else { return }
+            if authorized {
+                self.beginHeartRateMonitoring(onHeartRateUpdated: onHeartRateUpdated)
+                self.startStepCounting()
+                // Setup step count updates
+                self.$stepCount.sink { steps in
+                    onStepCountUpdated(steps)
+                }
+            } else {
+                self.requestAuthorization { success in
+                    if success {
+                        self.beginHeartRateMonitoring(onHeartRateUpdated: onHeartRateUpdated)
+                        self.startStepCounting()
+                    } else {
+                        print("HealthKit authorization failed.")
+                    }
+                }
+            }
+        }
+    }
+
     private func beginHeartRateMonitoring(onHeartRateUpdated: @escaping (Double) -> Void) {
         guard let heartRateType = HKObjectType.quantityType(forIdentifier: .heartRate) else {
             print("Heart rate type unavailable.")
             return
         }
 
-        // Workout session configuration remains the same
         let configuration = HKWorkoutConfiguration()
         configuration.activityType = .other
         
@@ -124,7 +177,7 @@ final class HeartRateMonitor: NSObject, ObservableObject {
             healthStore.execute(query)
             activeQuery = query
             
-            // Enable background delivery
+            // Enable background delivery for heart rate
             healthStore.enableBackgroundDelivery(for: heartRateType, frequency: .immediate) { success, error in
                 if let error = error {
                     print("Failed to enable background delivery: \(error)")
@@ -137,15 +190,22 @@ final class HeartRateMonitor: NSObject, ObservableObject {
     }
 
     func stopHeartRateMonitoring() {
-        // 쿼리 중지
+        // Stop queries
         if let query = activeQuery {
             healthStore.stop(query)
             activeQuery = nil
         }
         
+        if let query = stepQuery {
+            healthStore.stop(query)
+            stepQuery = nil
+        }
+        
+        // Reset step count
+        stepCount = 0
+        
         guard let builder = workoutBuilder else { return }
         
-        // 워크아웃 세션 종료
         workoutSession?.end()
         builder.endCollection(withEnd: Date()) { [weak self] success, error in
             guard success else {
@@ -162,11 +222,17 @@ final class HeartRateMonitor: NSObject, ObservableObject {
                 print("Finished workout: \(workout)")
             }
             
-            // 백그라운드 딜리버리 비활성화
-            if let heartRateType = HKObjectType.quantityType(forIdentifier: .heartRate) {
+            // Disable background delivery
+            if let heartRateType = HKObjectType.quantityType(forIdentifier: .heartRate),
+               let stepType = HKObjectType.quantityType(forIdentifier: .stepCount) {
                 self?.healthStore.disableBackgroundDelivery(for: heartRateType) { success, error in
                     if let error = error {
-                        print("Failed to disable background delivery: \(error)")
+                        print("Failed to disable background delivery for heart rate: \(error)")
+                    }
+                }
+                self?.healthStore.disableBackgroundDelivery(for: stepType) { success, error in
+                    if let error = error {
+                        print("Failed to disable background delivery for steps: \(error)")
                     }
                 }
             }
@@ -182,7 +248,6 @@ final class HeartRateMonitor: NSObject, ObservableObject {
         
         let heartRate = latestSample.quantity.doubleValue(for: HKUnit(from: "count/min"))
         
-        // 워크아웃 빌더에 심박수 데이터 추가
         if let builder = workoutBuilder {
             builder.add([latestSample]) { success, error in
                 if !success {

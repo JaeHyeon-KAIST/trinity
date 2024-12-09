@@ -3,15 +3,15 @@ import {Text, View, FlatList, StyleSheet, Animated} from 'react-native';
 import {Swipeable} from 'react-native-gesture-handler';
 
 const DummyWorkList = [
-  {id: 1, info: '할일 1', done: false},
-  {id: 2, info: '할일 2', done: true},
+  {id: 1, info: '보강지주 설치하기', done: false},
+  {id: 2, info: '검은무늬병 방제하기', done: false},
   {
     id: 3,
-    info: '할일 3',
+    info: '염화가리 25kg/10a(아르) 주기',
     done: false,
   },
-  {id: 4, info: '할일 4', done: true},
-  {id: 5, info: '할일 5', done: false},
+  {id: 4, info: 'A지역 파 수확하기', done: true},
+  {id: 5, info: '토양 살충제 뿌리기', done: true},
 ];
 
 const SWIPE_THRESHOLD = -100;

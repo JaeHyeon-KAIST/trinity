@@ -13,9 +13,10 @@ import BackgroundTimer from 'react-native-background-timer';
 import RNBackgroundFetch from 'react-native-background-fetch';
 import React, {useEffect, useRef, useState} from 'react';
 
-interface HeartRateData {
+interface HealthData {
   timestamp: number;
   heartRate: number;
+  steps: number;
 }
 
 interface Statistics {
@@ -24,32 +25,36 @@ interface Statistics {
   avgHeartRate: number;
   maxHeartRate: number;
   minHeartRate: number;
+  totalSteps: number;
 }
 
 interface WatchMessage {
   heartRate?: number;
+  steps?: number;
   monitoringState?: boolean;
   status?: string;
   heartRateData?: {
     heartRate: number;
+    steps: number;
     timestamp: number;
   };
 }
 
 export default function HealthHeartRate() {
   const [heartRate, setHeartRate] = useState<string | null>(null);
+  const [steps, setSteps] = useState<number>(0);
   const [watchStatus, setWatchStatus] = useState<string>('Disconnected');
   const [isMonitoring, setIsMonitoring] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [sessionStats, setSessionStats] = useState<Statistics | null>(null);
-  const [recentData, setRecentData] = useState<HeartRateData[]>([]);
+  const [recentData, setRecentData] = useState<HealthData[]>([]);
 
-  const heartRateDataRef = useRef<HeartRateData[]>([]);
+  const healthDataRef = useRef<HealthData[]>([]);
   const startTimeRef = useRef<number | null>(null);
   const appStateRef = useRef(AppState.currentState);
   const backgroundTaskRef = useRef<number | null>(null);
 
-  // 워치 연결 상태 확인 함수
+  // Watch connection check
   const checkWatchConnection = async () => {
     try {
       await sendMessage(
@@ -70,13 +75,12 @@ export default function HealthHeartRate() {
     }
   };
 
-  // 백그라운드 작업 설정
+  // Background task setup
   const setupBackgroundTask = async () => {
     try {
-      // Configure background fetch
       await RNBackgroundFetch.configure(
         {
-          minimumFetchInterval: 15, // 15분
+          minimumFetchInterval: 15,
           stopOnTerminate: false,
           enableHeadless: true,
           startOnBoot: true,
@@ -89,8 +93,7 @@ export default function HealthHeartRate() {
           console.log('[BackgroundFetch] Received task:', taskId);
           if (isMonitoring) {
             await checkWatchConnection();
-            // 데이터 동기화 로직 추가
-            await syncHeartRateData();
+            await syncHealthData();
           }
           RNBackgroundFetch.finish(taskId);
         },
@@ -99,41 +102,39 @@ export default function HealthHeartRate() {
         },
       );
 
-      // Start background fetch
       await RNBackgroundFetch.start();
     } catch (error) {
       console.log('Failed to setup background task:', error);
     }
   };
 
-  // 워치 연결 유지
+  // Keep watch connection
   const keepWatchConnection = () => {
     if (Platform.OS === 'ios') {
-      // Start background timer
       BackgroundTimer.runBackgroundTimer(() => {
         if (isMonitoring) {
           checkWatchConnection();
-          syncHeartRateData();
+          syncHealthData();
         }
       }, 1000);
 
-      // Setup background fetch if not already configured
       setupBackgroundTask();
     }
   };
 
-  // 데이터 동기화
-  const syncHeartRateData = async () => {
+  // Data sync
+  const syncHealthData = async () => {
     try {
       await sendMessage(
         {command: 'syncData'},
         (reply: WatchMessage) => {
           if (reply.heartRateData) {
-            const heartRateData: HeartRateData = {
+            const healthData: HealthData = {
               timestamp: Date.now(),
               heartRate: Number(reply.heartRateData.heartRate),
+              steps: Number(reply.heartRateData.steps || 0),
             };
-            handleNewHeartRateData(heartRateData);
+            handleNewHealthData(healthData);
           }
         },
         error => {
@@ -145,23 +146,23 @@ export default function HealthHeartRate() {
     }
   };
 
-  // 새로운 심박수 데이터 처리
-  const handleNewHeartRateData = (newData: HeartRateData) => {
+  // Handle new health data
+  const handleNewHealthData = (newData: HealthData) => {
     if (isMonitoring && startTimeRef.current) {
-      heartRateDataRef.current.push(newData);
+      healthDataRef.current.push(newData);
       setRecentData(prev => [...prev, newData].slice(-5));
       setHeartRate(`${newData.heartRate} bpm`);
+      setSteps(newData.steps);
 
-      // 백그라운드에서 데이터 로깅
       console.log(
-        `Background heart rate data: ${newData.heartRate} at ${new Date(
-          newData.timestamp,
-        ).toLocaleTimeString()}`,
+        `Background health data: HR: ${newData.heartRate}, Steps: ${
+          newData.steps
+        } at ${new Date(newData.timestamp).toLocaleTimeString()}`,
       );
     }
   };
 
-  // 앱 상태 변경 감지
+  // App state change detection
   useEffect(() => {
     const subscription = AppState.addEventListener('change', nextAppState => {
       if (
@@ -171,7 +172,7 @@ export default function HealthHeartRate() {
         console.log('App has come to the foreground!');
         if (isMonitoring) {
           checkWatchConnection();
-          syncHeartRateData();
+          syncHealthData();
         }
       } else if (
         appStateRef.current === 'active' &&
@@ -185,7 +186,6 @@ export default function HealthHeartRate() {
       appStateRef.current = nextAppState;
     });
 
-    // Cleanup function
     return () => {
       subscription.remove();
       if (backgroundTaskRef.current) {
@@ -195,60 +195,64 @@ export default function HealthHeartRate() {
     };
   }, [isMonitoring]);
 
-  // 워치 이벤트 구독
-  // 워치 이벤트 구독 부분 수정
+  // Watch event subscription
   useEffect(() => {
-    const unsubscribeMessage = watchEvents.on('message', (message, reply) => {
-      if ('heartRate' in message) {
-        const heartRateData: HeartRateData = {
-          timestamp: Date.now(),
-          heartRate: Number(message.heartRate),
-        };
-        handleNewHeartRateData(heartRateData);
-      }
-      if ('monitoringState' in message) {
-        const monitoringState = Boolean(message.monitoringState);
-
-        if (monitoringState != isMonitoring) {
-          setIsMonitoring(monitoringState);
-          if (monitoringState) {
-            // Monitoring has started from the Watch
-            startTimeRef.current = Date.now();
-            heartRateDataRef.current = [];
-            setRecentData([]);
-            setSessionStats(null);
-          } else {
-            // Monitoring has stopped
-            const sessionDuration = startTimeRef.current
-              ? Math.floor((Date.now() - startTimeRef.current) / 1000)
-              : 0;
-            if (heartRateDataRef.current.length > 0) {
-              const heartRates = heartRateDataRef.current.map(
-                data => data.heartRate,
-              );
-              const avgHeartRate =
-                heartRates.reduce((a, b) => a + b) / heartRates.length;
-              const maxHeartRate = Math.max(...heartRates);
-              const minHeartRate = Math.min(...heartRates);
-
-              const stats: Statistics = {
-                duration: sessionDuration,
-                totalMeasurements: heartRateDataRef.current.length,
-                avgHeartRate: parseFloat(avgHeartRate.toFixed(1)),
-                maxHeartRate,
-                minHeartRate,
-              };
-
-              setSessionStats(stats);
-            }
-
-            startTimeRef.current = null;
-            heartRateDataRef.current = [];
-          }
-          setIsLoading(false);
+    const unsubscribeMessage = watchEvents.on(
+      'message',
+      (message: WatchMessage) => {
+        if ('heartRate' in message && 'steps' in message) {
+          const healthData: HealthData = {
+            timestamp: Date.now(),
+            heartRate: Number(message.heartRate),
+            steps: Number(message.steps),
+          };
+          handleNewHealthData(healthData);
         }
-      }
-    });
+        if ('monitoringState' in message) {
+          const monitoringState = Boolean(message.monitoringState);
+
+          if (monitoringState != isMonitoring) {
+            setIsMonitoring(monitoringState);
+            if (monitoringState) {
+              startTimeRef.current = Date.now();
+              healthDataRef.current = [];
+              setRecentData([]);
+              setSessionStats(null);
+            } else {
+              const sessionDuration = startTimeRef.current
+                ? Math.floor((Date.now() - startTimeRef.current) / 1000)
+                : 0;
+              if (healthDataRef.current.length > 0) {
+                const heartRates = healthDataRef.current.map(
+                  data => data.heartRate,
+                );
+                const avgHeartRate =
+                  heartRates.reduce((a, b) => a + b) / heartRates.length;
+                const maxHeartRate = Math.max(...heartRates);
+                const minHeartRate = Math.min(...heartRates);
+                const totalSteps =
+                  healthDataRef.current[healthDataRef.current.length - 1].steps;
+
+                const stats: Statistics = {
+                  duration: sessionDuration,
+                  totalMeasurements: healthDataRef.current.length,
+                  avgHeartRate: parseFloat(avgHeartRate.toFixed(1)),
+                  maxHeartRate,
+                  minHeartRate,
+                  totalSteps,
+                };
+
+                setSessionStats(stats);
+              }
+
+              startTimeRef.current = null;
+              healthDataRef.current = [];
+            }
+            setIsLoading(false);
+          }
+        }
+      },
+    );
 
     const unsubscribeReachability = watchEvents.on(
       'reachability',
@@ -261,13 +265,13 @@ export default function HealthHeartRate() {
       unsubscribeMessage();
       unsubscribeReachability();
     };
-  }, [handleNewHeartRateData]);
+  }, [isMonitoring]);
 
   const startMonitoring = () => {
     if (watchStatus === 'Connected') {
       setIsLoading(true);
       startTimeRef.current = Date.now();
-      heartRateDataRef.current = [];
+      healthDataRef.current = [];
       setRecentData([]);
       setSessionStats(null);
 
@@ -308,29 +312,31 @@ export default function HealthHeartRate() {
               ? Math.floor((Date.now() - startTimeRef.current) / 1000)
               : 0;
 
-            if (heartRateDataRef.current.length > 0) {
-              const heartRates = heartRateDataRef.current.map(
+            if (healthDataRef.current.length > 0) {
+              const heartRates = healthDataRef.current.map(
                 data => data.heartRate,
               );
               const avgHeartRate =
                 heartRates.reduce((a, b) => a + b) / heartRates.length;
               const maxHeartRate = Math.max(...heartRates);
               const minHeartRate = Math.min(...heartRates);
+              const totalSteps =
+                healthDataRef.current[healthDataRef.current.length - 1].steps;
 
               const stats: Statistics = {
                 duration: sessionDuration,
-                totalMeasurements: heartRateDataRef.current.length,
+                totalMeasurements: healthDataRef.current.length,
                 avgHeartRate: parseFloat(avgHeartRate.toFixed(1)),
                 maxHeartRate,
                 minHeartRate,
+                totalSteps,
               };
 
               setSessionStats(stats);
             }
 
-            // Cleanup
             startTimeRef.current = null;
-            heartRateDataRef.current = [];
+            healthDataRef.current = [];
             BackgroundTimer.stopBackgroundTimer();
           } else {
             Alert.alert('Error', 'Watch failed to stop monitoring.');
@@ -350,13 +356,20 @@ export default function HealthHeartRate() {
 
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
-      <Text style={styles.title}>Real-Time Heart Rate</Text>
+      <Text style={styles.title}>Health Monitor</Text>
       <Text style={styles.status}>Watch Status: {watchStatus}</Text>
-      {heartRate ? (
-        <Text style={styles.heartRate}>{heartRate}</Text>
-      ) : (
-        <Text style={styles.loading}>Waiting for data...</Text>
-      )}
+
+      <View style={styles.metricsContainer}>
+        <View style={styles.metricBox}>
+          <Text style={styles.metricValue}>{heartRate ? heartRate : '--'}</Text>
+          <Text style={styles.metricLabel}>Heart Rate</Text>
+        </View>
+
+        <View style={styles.metricBox}>
+          <Text style={styles.metricValue}>{steps}</Text>
+          <Text style={styles.metricLabel}>Steps</Text>
+        </View>
+      </View>
 
       {isMonitoring ? (
         <Button
@@ -374,20 +387,20 @@ export default function HealthHeartRate() {
         />
       )}
 
-      {/* 실시간 데이터 표시 */}
+      {/* Recent data display */}
       {isMonitoring && recentData.length > 0 && (
         <View style={styles.dataContainer}>
           <Text style={styles.sectionTitle}>Recent Measurements</Text>
-          {recentData.map((data, _) => (
+          {recentData.map((data, index) => (
             <Text key={data.timestamp} style={styles.dataText}>
               {new Date(data.timestamp).toLocaleTimeString()}: {data.heartRate}{' '}
-              bpm
+              bpm, {data.steps} steps
             </Text>
           ))}
         </View>
       )}
 
-      {/* 세션 통계 표시 */}
+      {/* Session statistics display */}
       {sessionStats && (
         <View style={styles.dataContainer}>
           <Text style={styles.sectionTitle}>Session Summary</Text>
@@ -406,6 +419,9 @@ export default function HealthHeartRate() {
           <Text style={styles.dataText}>
             Minimum Heart Rate: {sessionStats.minHeartRate} bpm
           </Text>
+          <Text style={styles.dataText}>
+            Total Steps: {sessionStats.totalSteps}
+          </Text>
         </View>
       )}
     </ScrollView>
@@ -413,17 +429,14 @@ export default function HealthHeartRate() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
   scrollContainer: {
     flexGrow: 1,
     alignItems: 'center',
     paddingVertical: 20,
+    backgroundColor: '#fff',
   },
   title: {
-    fontSize: 20,
+    fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 10,
   },
@@ -432,16 +445,37 @@ const styles = StyleSheet.create({
     color: 'gray',
     marginBottom: 20,
   },
-  heartRate: {
-    fontSize: 24,
-    color: 'red',
-    fontWeight: 'bold',
+  metricsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    width: '100%',
     marginBottom: 20,
+    paddingHorizontal: 15,
   },
-  loading: {
-    fontSize: 16,
-    color: '#888',
-    marginBottom: 20,
+  metricBox: {
+    alignItems: 'center',
+    backgroundColor: '#f5f5f5',
+    padding: 15,
+    borderRadius: 10,
+    width: '45%',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  metricValue: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  metricLabel: {
+    fontSize: 14,
+    color: 'gray',
+    marginTop: 5,
   },
   dataContainer: {
     width: '90%',
@@ -449,15 +483,49 @@ const styles = StyleSheet.create({
     padding: 15,
     borderRadius: 10,
     marginTop: 20,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 10,
+    color: '#333',
   },
   dataText: {
     fontSize: 14,
     marginBottom: 5,
-    color: '#333',
+    color: '#666',
+  },
+  buttonContainer: {
+    width: '90%',
+    marginVertical: 20,
+  },
+  button: {
+    width: '100%',
+    padding: 15,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  buttonStart: {
+    backgroundColor: '#4CAF50',
+  },
+  buttonStop: {
+    backgroundColor: '#f44336',
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  buttonDisabled: {
+    opacity: 0.5,
   },
 });

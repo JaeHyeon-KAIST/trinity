@@ -13,17 +13,36 @@ struct ContentView: View {
     }
 
     var body: some View {
-        VStack {
-            Text("Real-Time Heart Rate")
+        VStack(spacing: 10) {
+            Text("Health Monitor")
                 .font(.headline)
-
-            if let heartRate = heartRateMonitor.heartRate {
-                Text("\(Int(heartRate)) bpm")
-                    .font(.largeTitle)
-                    .foregroundColor(.red)
-            } else {
-                Text("Fetching...")
-                    .foregroundColor(.gray)
+                .foregroundColor(.primary)
+            
+            VStack(spacing: 5) {
+                if let heartRate = heartRateMonitor.heartRate {
+                    Text("\(Int(heartRate))")
+                        .font(.system(size: 40, weight: .bold))
+                        .foregroundColor(.red)
+                    Text("BPM")
+                        .font(.caption)
+                        .foregroundColor(.red)
+                } else {
+                    Text("--")
+                        .font(.system(size: 40, weight: .bold))
+                        .foregroundColor(.gray)
+                    Text("BPM")
+                        .font(.caption)
+                        .foregroundColor(.gray)
+                }
+            }
+            
+            VStack(spacing: 5) {
+                Text("\(heartRateMonitor.stepCount)")
+                    .font(.system(size: 32, weight: .bold))
+                    .foregroundColor(.green)
+                Text("STEPS")
+                    .font(.caption)
+                    .foregroundColor(.green)
             }
 
             if phoneConnector.isMonitoring {
@@ -31,27 +50,44 @@ struct ContentView: View {
                     heartRateMonitor.stopHeartRateMonitoring()
                     phoneConnector.isMonitoring = false
                 }) {
-                    Text("Stop Monitoring")
-                        .padding()
-                        .background(Color.red)
-                        .foregroundColor(.white)
-                        .cornerRadius(10)
+                    Text("Stop")
+                        .fontWeight(.semibold)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 8)
                 }
+                .buttonStyle(.borderedProminent)
+                .tint(.red)
             } else {
                 Button(action: {
-                    heartRateMonitor.startHeartRateMonitoring { heartRate in
-                        phoneConnector.sendMessageToPhone(heartRate: heartRate)
-                    }
+                    heartRateMonitor.startHeartRateMonitoring(
+                        onHeartRateUpdated: { heartRate in
+                            phoneConnector.sendMessageToPhone(
+                                heartRate: heartRate,
+                                steps: heartRateMonitor.stepCount
+                            )
+                        },
+                        onStepCountUpdated: { steps in
+                            phoneConnector.sendMessageToPhone(
+                                heartRate: heartRateMonitor.heartRate ?? 0,
+                                steps: steps
+                            )
+                        }
+                    )
                     phoneConnector.isMonitoring = true
                 }) {
-                    Text("Start Monitoring")
-                        .padding()
-                        .background(Color.green)
-                        .foregroundColor(.white)
-                        .cornerRadius(10)
+                    Text("Start")
+                        .fontWeight(.semibold)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 8)
                 }
+                .buttonStyle(.borderedProminent)
+                .tint(.green)
             }
         }
         .padding()
     }
+}
+
+#Preview {
+    ContentView()
 }

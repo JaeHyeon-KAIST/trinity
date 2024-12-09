@@ -6,7 +6,6 @@ final class PhoneConnector: NSObject, ObservableObject, WCSessionDelegate {
     @Published var receivedMessage = "Waiting..."
     @Published var isMonitoring: Bool = false {
         didSet {
-            // isMonitoring 상태가 변경될 때마다 아이폰에 알림
             sendMonitoringState()
         }
     }
@@ -35,12 +34,10 @@ final class PhoneConnector: NSObject, ObservableObject, WCSessionDelegate {
         print("Message received: \(message)")
         if let messageFromPhone = message["command"] as? String {
             self.handleCommand(messageFromPhone)
-            // 성공 응답 전송
             replyHandler(["status": "success"])
         }
     }
     
-    // 모니터링 상태를 아이폰에 전송하는 메서드
     private func sendMonitoringState() {
         if session.isReachable {
             let message: [String: Any] = ["monitoringState": isMonitoring]
@@ -50,11 +47,12 @@ final class PhoneConnector: NSObject, ObservableObject, WCSessionDelegate {
         }
     }
 
-    func sendMessageToPhone(heartRate: Double) {
+    func sendMessageToPhone(heartRate: Double, steps: Int) {
         if session.isReachable {
             let message: [String: Any] = [
                 "heartRate": heartRate,
-                "monitoringState": isMonitoring  // 심박수와 함께 현재 상태도 전송
+                "steps": steps,
+                "monitoringState": isMonitoring
             ]
             session.sendMessage(message, replyHandler: nil) { error in
                 print("Error sending message to iPhone: \(error.localizedDescription)")
@@ -69,9 +67,20 @@ final class PhoneConnector: NSObject, ObservableObject, WCSessionDelegate {
             print("Received command: \(command)")
             if command == "startMonitoring" {
                 print("Start monitoring command received from iPhone.")
-                self.heartRateMonitor?.startHeartRateMonitoring { heartRate in
-                    self.sendMessageToPhone(heartRate: heartRate)
-                }
+                self.heartRateMonitor?.startHeartRateMonitoring(
+                    onHeartRateUpdated: { [weak self] heartRate in
+                        self?.sendMessageToPhone(
+                            heartRate: heartRate,
+                            steps: self?.heartRateMonitor?.stepCount ?? 0
+                        )
+                    },
+                    onStepCountUpdated: { [weak self] steps in
+                        self?.sendMessageToPhone(
+                            heartRate: self?.heartRateMonitor?.heartRate ?? 0,
+                            steps: steps
+                        )
+                    }
+                )
                 self.isMonitoring = true
             } else if command == "stopMonitoring" {
                 print("Stop monitoring command received from iPhone.")
