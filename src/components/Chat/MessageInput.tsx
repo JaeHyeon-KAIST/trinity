@@ -34,8 +34,11 @@ export default function MessageInput({onShouldSendMessage}: MessageInputProps) {
           value={message}
           onChangeText={setMessage}
         />
-        <TouchableOpacity onPress={onSend}>
-          <Text>질문</Text>
+        <TouchableOpacity
+          style={styles.sendButton}
+          onPress={onSend}
+          activeOpacity={0.7}>
+          <Text style={styles.sendButtonText}>전송</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -60,5 +63,17 @@ const styles = StyleSheet.create({
     padding: 10,
     borderColor: 'gray',
     backgroundColor: Colors.light,
+  },
+  sendButton: {
+    borderRadius: 15,
+    padding: 10,
+    backgroundColor: '#E3F2D3',
+    borderWidth: 1,
+    borderColor: '#3C8031',
+  },
+  sendButtonText: {
+    color: '#003D08',
+    fontSize: 14,
+    fontWeight: 'bold',
   },
 });

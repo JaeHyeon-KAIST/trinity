@@ -6,12 +6,13 @@ import {
   View,
 } from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {useState} from 'react';
+import {useContext, useEffect, useState} from 'react';
 import {FlashList} from '@shopify/flash-list';
 import axios, {AxiosError} from 'axios';
 import MessageInput from '../components/Chat/MessageInput';
 import ChatMessage from '../components/Chat/ChatMessage';
 import {Message, Role} from '../utils/Interfaces';
+import {chatGPTContext} from '../App.tsx';
 
 const START_MESSAGES: Message[] = [
   {
@@ -29,6 +30,7 @@ if (!OPENAI_API_KEY) {
 }
 
 export default function Chat() {
+  const {message, setMessage} = useContext(chatGPTContext);
   const [messages, setMessages] = useState<Message[]>(START_MESSAGES);
   const [threadId, setThreadId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -189,6 +191,16 @@ export default function Chat() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    const formattedMessages = messages
+      .map(msg => {
+        const role = msg.role === Role.User ? '유저' : 'GPT';
+        return `${role}: ${msg.content}`;
+      })
+      .join('\n'); // 메시지 간에 줄바꿈 추가
+    setMessage(formattedMessages); // 정리된 메시지를 저장
+  }, [messages, setMessage]);
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>

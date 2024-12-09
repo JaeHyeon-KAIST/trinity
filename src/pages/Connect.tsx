@@ -1,13 +1,9 @@
-import {
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-  ScrollView,
-} from 'react-native';
+import {StyleSheet, Text, View, ScrollView} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import React from 'react';
 import ClassContainer from '../components/Connect/ClassContainer.tsx';
+import {NavigationProp, useNavigation} from '@react-navigation/native';
+import {RootStackParamList} from '../router/Router.tsx';
 
 const DummyDataMy = [
   {
@@ -36,6 +32,8 @@ const DummyDataOther = [
 ];
 
 export default function Connect() {
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
@@ -47,7 +45,9 @@ export default function Connect() {
             name={item.name}
             info={item.info}
             buttonText="참여 중"
-            buttonOnClick={() => console.log('Clicked')}
+            buttonOnClick={() =>
+              navigation.navigate('ConnectChat', {userId: 'user'})
+            }
           />
         ))}
         <View style={styles.divider} />
@@ -62,6 +62,14 @@ export default function Connect() {
             buttonOnClick={() => console.log('Clicked')}
           />
         ))}
+        <ClassContainer
+          name={'zzz 베테랑님의 교실'}
+          info={['농사 시작하기', '농부의 삶']}
+          buttonText="신청하기"
+          buttonOnClick={() =>
+            navigation.navigate('ConnectChat', {userId: 'expert'})
+          }
+        />
       </ScrollView>
     </SafeAreaView>
   );

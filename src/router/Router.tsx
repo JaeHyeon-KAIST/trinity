@@ -3,6 +3,7 @@ import TabNavigator from './TabNavigator.tsx';
 import WeatherDetailPage from '../pages/WeatherDetailPage.tsx';
 import RemarkDetailPage from '../pages/RemarkDetailPage.tsx';
 import HealthDetailPage from '../pages/HealthDetailPage.tsx';
+import ConnectChatPage from '../pages/ConnectChatPage.tsx';
 
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -11,6 +12,7 @@ export type RootStackParamList = {
   WeatherDetail: undefined;
   RemarkDetail: undefined;
   HealthDetail: undefined;
+  ConnectChat: {userId: string};
 };
 
 export default function Router() {
@@ -21,6 +23,7 @@ export default function Router() {
         <Stack.Screen name="WeatherDetail" component={WeatherDetailPage} />
         <Stack.Screen name="RemarkDetail" component={RemarkDetailPage} />
         <Stack.Screen name="HealthDetail" component={HealthDetailPage} />
+        <Stack.Screen name="ConnectChat" component={ConnectChatPage} />
       </Stack.Group>
     </Stack.Navigator>
   );
