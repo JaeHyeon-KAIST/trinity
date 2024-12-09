@@ -135,7 +135,9 @@ export default function ConnectChatPage() {
                   </Text>
                 </TouchableOpacity>
               )}
-            <KeyboardAvoidingView behavior="padding">
+            <KeyboardAvoidingView
+              keyboardVerticalOffset={75}
+              behavior="padding">
               <MessageInput onShouldSendMessage={sendMessage} />
             </KeyboardAvoidingView>
           </>
