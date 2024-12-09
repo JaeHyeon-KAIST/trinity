@@ -85,6 +85,41 @@ class WeatherKitModule: NSObject {
             }
         }
     }
+  
+    // 24시간 날씨 정보 가져오기
+    @objc
+    func getTwentyFourWeather(_ latitude: Double, longitude: Double, resolver: @escaping RCTPromiseResolveBlock, rejecter: @escaping RCTPromiseRejectBlock) {
+        let location = CLLocation(latitude: latitude, longitude: longitude)
+
+        Task {
+            do {
+                let weather = try await weatherService.weather(for: location)
+                let hourlyForecast = weather.hourlyForecast.prefix(24) // 24시간 데이터 가져오기
+
+                var hourlyData: [[String: Any]] = []
+
+                let dateFormatter = DateFormatter()
+                dateFormatter.dateFormat = "h a" // AM/PM 형식
+                dateFormatter.timeZone = TimeZone(identifier: "Asia/Seoul")
+
+                for hour in hourlyForecast {
+                    let time = dateFormatter.string(from: hour.date) // 시간 형식
+                    let temperature = hour.temperature.value
+                    let conditionDescription = hour.condition.description // 상태 설명 (ex. "Clear", "Rain")
+
+                    hourlyData.append([
+                        "time": time,
+                        "temperature": temperature,
+                        "condition": conditionDescription
+                    ])
+                }
+
+                resolver(hourlyData)
+            } catch {
+                rejecter("Error", "Unable to fetch 24-hour weather", error)
+            }
+        }
+    }
 
     // 일주일 날씨 정보 가져오기
     @objc

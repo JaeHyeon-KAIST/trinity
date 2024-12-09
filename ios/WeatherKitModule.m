@@ -21,6 +21,11 @@ RCT_EXTERN_METHOD(getHourlyWeather:(double)latitude
                      resolver:(RCTPromiseResolveBlock)resolver
                      rejecter:(RCTPromiseRejectBlock)rejecter)
 
+RCT_EXTERN_METHOD(getTwentyFourWeather:(double)latitude
+                     longitude:(double)longitude
+                     resolver:(RCTPromiseResolveBlock)resolver
+                     rejecter:(RCTPromiseRejectBlock)rejecter)
+
 RCT_EXTERN_METHOD(getWeeklyWeather:(double)latitude
                      longitude:(double)longitude
                      resolver:(RCTPromiseResolveBlock)resolver

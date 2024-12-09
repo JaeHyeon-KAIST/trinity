@@ -5,10 +5,9 @@ import {NativeModules} from 'react-native';
 
 const {WeatherKitModule} = NativeModules;
 
-import SunnySVG from '../../assets/icon/sunny.svg';
-import RainySVG from '../../assets/icon/rainy.svg';
-import CloudySVG from '../../assets/icon/cloudy.svg';
-import PartlyCloudySVG from '../../assets/icon/partlyCloudy.svg';
+import CurrentWeatherSVG, {
+  classifyCondition,
+} from '../../utils/CurrentWeatherSVG.tsx';
 
 interface CurrentWeather {
   temperature: number; // 현재 온도
@@ -43,52 +42,6 @@ export default function Weather() {
       return '0'; // 0은 그대로 0으로 표시
     }
     return value > 10 ? Math.round(value).toString() : value.toFixed(1);
-  };
-
-  const classifyCondition = (condition: string) => {
-    const normalizedCondition = condition?.toLowerCase(); // 소문자로 변환
-    if (['clear', 'mostly clear', 'hot'].includes(normalizedCondition)) {
-      return 'sunny';
-    }
-    if (
-      [
-        'cloudy',
-        'mostly cloudy',
-        'breezy',
-        'foggy',
-        'haze',
-        'smoky',
-        'blowing dust',
-        'blowing snow',
-      ].includes(normalizedCondition)
-    ) {
-      return 'cloudy';
-    }
-    if (['partly cloudy'].includes(normalizedCondition)) {
-      return 'partlyCloudy';
-    }
-    if (
-      [
-        'rain',
-        'drizzle',
-        'freezing drizzle',
-        'freezing rain',
-        'sleet',
-        'snow',
-        'heavy rain',
-        'heavy snow',
-        'thunderstorms',
-        'scatteredthunderstorms',
-        'isolatedthunderstorms',
-        'wintrymix',
-        'hail',
-        'tropicalstorm',
-        'hurricane',
-      ].includes(normalizedCondition)
-    ) {
-      return 'rainy';
-    }
-    return 'sunny';
   };
 
   useEffect(() => {
@@ -146,18 +99,10 @@ export default function Weather() {
     <View style={styles.container}>
       {/* Left Section: Current Weather */}
       <View style={styles.leftSection}>
-        {currentWeather?.condition === 'cloudy' && (
-          <CloudySVG width={100} height={100} />
-        )}
-        {currentWeather?.condition === 'partlyCloudy' && (
-          <PartlyCloudySVG width={100} height={100} />
-        )}
-        {currentWeather?.condition === 'rainy' && (
-          <RainySVG width={100} height={100} />
-        )}
-        {currentWeather?.condition === 'sunny' && ( // <SunnySVG width={110} height={110} />
-          <SunnySVG width={100} height={100} />
-        )}
+        <CurrentWeatherSVG
+          condition={currentWeather?.condition || ''}
+          size={100}
+        />
         <Text style={styles.temperature}>
           <Text style={styles.temperatureValue}>
             {currentWeather?.temperature
@@ -189,14 +134,7 @@ export default function Weather() {
                   weekday: 'short',
                 })}
               </Text>
-              {day.condition === 'cloudy' && (
-                <CloudySVG width={24} height={24} />
-              )}
-              {day.condition === 'partlyCloudy' && (
-                <PartlyCloudySVG width={24} height={24} />
-              )}
-              {day.condition === 'rainy' && <RainySVG width={24} height={24} />}
-              {day.condition === 'sunny' && <SunnySVG width={24} height={24} />}
+              <CurrentWeatherSVG condition={day.condition} size={24} />
             </View>
           ))}
         </View>
