@@ -41,6 +41,8 @@
 	<string>This app uses HealthKit to track your heart rate.</string>
 	<key>NSHealthUpdateUsageDescription</key>
 	<string>This app uses HealthKit to display your heart rate in real time.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>날씨 데이터에 필요합니다</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>날씨 데이터에 필요합니다</string>
 	<key>NSMicrophoneUsageDescription</key>
