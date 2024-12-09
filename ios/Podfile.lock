@@ -1649,6 +1649,8 @@ PODS:
     - React-Core
   - RNBackgroundFetch (4.2.5):
     - React-Core
+  - RNCClipboard (1.15.0):
+    - React-Core
   - RNFBApp (21.6.1):
     - Firebase/CoreOnly (= 11.5.0)
     - React-Core
@@ -1806,6 +1808,7 @@ DEPENDENCIES:
   - RNAppleHealthKit (from `../node_modules/react-native-health`)
   - RNAudioRecorderPlayer (from `../node_modules/react-native-audio-recorder-player`)
   - RNBackgroundFetch (from `../node_modules/react-native-background-fetch`)
+  - "RNCClipboard (from `../node_modules/@react-native-clipboard/clipboard`)"
   - "RNFBApp (from `../node_modules/@react-native-firebase/app`)"
   - "RNFBMessaging (from `../node_modules/@react-native-firebase/messaging`)"
   - "RNFlashList (from `../node_modules/@shopify/flash-list`)"
@@ -1970,6 +1973,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-audio-recorder-player"
   RNBackgroundFetch:
     :path: "../node_modules/react-native-background-fetch"
+  RNCClipboard:
+    :path: "../node_modules/@react-native-clipboard/clipboard"
   RNFBApp:
     :path: "../node_modules/@react-native-firebase/app"
   RNFBMessaging:
@@ -2069,6 +2074,7 @@ SPEC CHECKSUMS:
   RNAppleHealthKit: 60a6beefdd89a75811e9a8873a5e24f351dee681
   RNAudioRecorderPlayer: 224c7de87722938aedce04000d09baa633148f5b
   RNBackgroundFetch: 2f800a04434620db15ede2e8f21886608a2d1743
+  RNCClipboard: 69ab8e51324d5b351f6ba72bbdb72478087a2c64
   RNFBApp: 1de631bffe154f4f8b56f8dbfb13d6305d658e97
   RNFBMessaging: 3b6af169c3caf08af40ca79fa4bdc422c3f1a10c
   RNFlashList: 65cae4529e37bb9af1e6256117a2b9be60270db2
