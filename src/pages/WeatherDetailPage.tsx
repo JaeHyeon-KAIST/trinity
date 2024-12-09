@@ -17,6 +17,15 @@ import dayjs from 'dayjs';
 
 const {WeatherKitModule} = NativeModules;
 
+interface CurrentWeather {
+  temperature: number; // 현재 온도
+  condition: string; // 날씨 상태
+  humidity: number; // 습도 (%)
+  highTemperature: number; // 최고 기온
+  lowTemperature: number; // 최저 기온
+  precipitationAmount: number; // 강수량 (mm)
+}
+
 interface WeatherData {
   time: string;
   temperature: number;
@@ -31,6 +40,9 @@ interface DailyWeather {
 }
 
 export default function WeatherDetailPage() {
+  const [currentWeather, setCurrentWeather] = useState<CurrentWeather | null>(
+    null,
+  );
   const [hourlyWeather, sethourlyWeather] = useState<WeatherData[] | null>(
     null,
   );
@@ -40,6 +52,13 @@ export default function WeatherDetailPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const formatNumber = (value: number | undefined): string => {
+    if (value === 0 || value === undefined) {
+      return '0'; // 0은 그대로 0으로 표시
+    }
+    return value > 10 ? Math.round(value).toString() : value.toFixed(1);
+  };
+
   useEffect(() => {
     const fetchWeather = async () => {
       Geolocation.getCurrentPosition(
@@ -47,6 +66,10 @@ export default function WeatherDetailPage() {
           const {latitude, longitude} = position.coords;
 
           try {
+            const current = await WeatherKitModule.getCurrentWeather(
+              latitude,
+              longitude,
+            );
             const hourly = await WeatherKitModule.getTwentyFourWeather(
               latitude,
               longitude,
@@ -55,6 +78,7 @@ export default function WeatherDetailPage() {
               latitude,
               longitude,
             );
+            setCurrentWeather(current);
             sethourlyWeather(hourly);
             setWeeklyWeather(weekly);
           } catch (err) {
@@ -88,7 +112,17 @@ export default function WeatherDetailPage() {
     <SafeAreaView style={{backgroundColor: '#F4FDED', flex: 1}}>
       <HomeDetailPageContainer title="기상 정보">
         <Text style={styles.city}>대전광역시</Text>
-        <Text style={styles.title}>시간별 날씨</Text>
+        <View style={styles.cityTempContainer}>
+          <Text style={styles.cityTempNumber}>
+            {formatNumber(currentWeather?.temperature)}
+          </Text>
+          <Text style={styles.cityTempDegree}>°</Text>
+        </View>
+        <Text style={styles.cityCondition}>{currentWeather?.condition}</Text>
+        <Text style={styles.cityHighLowTemp}>
+          H:{Math.round(currentWeather?.highTemperature as number)}° L:
+          {Math.round(currentWeather?.lowTemperature as number)}°
+        </Text>
         <View style={styles.hourlyWeatherContainer}>
           <FlatList
             data={hourlyWeather}
@@ -108,25 +142,58 @@ export default function WeatherDetailPage() {
             showsHorizontalScrollIndicator={false}
           />
         </View>
-        <Text style={styles.title}>주간 날씨</Text>
         <View style={styles.weeklyWeatherContainer}>
-          {weeklyWeather?.map((day, index) => (
-            <View key={index} style={styles.weeklyWeatherCard}>
-              <Text style={styles.weekdayText}>
-                {dayjs(day.date).format('ddd')}
-              </Text>
-              <CurrentWeatherSVG
-                condition={classifyCondition(day.condition)}
-                size={30}
-              />
-              <Text style={styles.highTemp}>
-                {Math.round(day.highTemperature) + '°'}
-              </Text>
-              <Text style={styles.lowTemp}>
-                {Math.round(day.lowTemperature) + '°'}
-              </Text>
+          {weeklyWeather && (
+            <View>
+              {weeklyWeather.map((day, index) => {
+                const minTemp = Math.min(
+                  ...weeklyWeather.map(d => d.lowTemperature),
+                );
+                const maxTemp = Math.max(
+                  ...weeklyWeather.map(d => d.highTemperature),
+                );
+                const totalRange = maxTemp - minTemp;
+
+                // 막대 시작점과 너비 계산
+                const leftOffset =
+                  ((day.lowTemperature - minTemp) / totalRange) * 100;
+                const width =
+                  ((day.highTemperature - day.lowTemperature) / totalRange) *
+                  100;
+
+                return (
+                  <View key={index} style={styles.weeklyWeatherRow}>
+                    <Text style={styles.weekdayText}>
+                      {dayjs(day.date).format('ddd')}
+                    </Text>
+                    <CurrentWeatherSVG
+                      condition={classifyCondition(day.condition)}
+                      size={30}
+                    />
+                    <Text style={styles.lowTemp}>
+                      {Math.round(day.lowTemperature)}°
+                    </Text>
+                    <View style={styles.temperatureBarContainer}>
+                      <View style={styles.temperatureBar}>
+                        <View
+                          style={[
+                            styles.temperatureRange,
+                            {
+                              left: `${leftOffset}%`,
+                              width: `${width}%`,
+                            },
+                          ]}
+                        />
+                      </View>
+                    </View>
+                    <Text style={styles.highTemp}>
+                      {Math.round(day.highTemperature)}°
+                    </Text>
+                  </View>
+                );
+              })}
             </View>
-          ))}
+          )}
         </View>
       </HomeDetailPageContainer>
     </SafeAreaView>
@@ -135,10 +202,43 @@ export default function WeatherDetailPage() {
 
 const styles = StyleSheet.create({
   city: {
-    fontSize: 18,
+    fontSize: 22,
     fontWeight: 'bold',
     textAlign: 'center',
+    marginTop: 20,
     marginBottom: 10,
+    color: '#003D08',
+  },
+  cityTempContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'relative', // 숫자와 기호를 겹칠 수 있도록 설정
+  },
+  cityTempNumber: {
+    fontSize: 80,
+    fontWeight: 'bold',
+    color: '#003D08',
+    textAlign: 'center', // 숫자가 정확히 가운데 오도록 설정
+  },
+  cityTempDegree: {
+    fontSize: 70,
+    fontWeight: 'normal',
+    color: '#003D08',
+    position: 'absolute', // 기호를 숫자와 겹치도록 설정
+    right: -25, // 숫자 오른쪽에 배치
+    top: 0, // 숫자의 위쪽에 약간 맞춰 배치
+  },
+  cityCondition: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    color: '#003D08',
+  },
+  cityHighLowTemp: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    color: '#003D08',
   },
   title: {
     fontSize: 20,
@@ -150,15 +250,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginVertical: 10,
+    marginTop: 20,
+    marginBottom: 10,
   },
   hourlyWeatherCard: {
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 10,
-    padding: 10,
-    backgroundColor: '#fff',
-    width: 60,
+    width: 50,
   },
   hourlyTime: {
     fontSize: 12,
@@ -172,30 +271,48 @@ const styles = StyleSheet.create({
   weeklyWeatherContainer: {
     marginTop: 10,
     paddingHorizontal: 16,
+    width: 380,
   },
-  weeklyWeatherCard: {
+  weeklyWeatherRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginVertical: 6,
-    paddingVertical: 10,
-    paddingHorizontal: 15,
-    borderWidth: 1,
-    borderRadius: 10,
-    backgroundColor: '#fff',
+    marginVertical: 8,
   },
   weekdayText: {
+    width: 50,
     fontSize: 16,
     fontWeight: 'bold',
-    width: 50,
-  },
-  highTemp: {
-    fontSize: 16,
-    color: 'red',
   },
   lowTemp: {
-    fontSize: 16,
+    marginLeft: 10,
+    fontSize: 14,
     color: 'blue',
+    marginRight: 10,
+  },
+  highTemp: {
+    fontSize: 14,
+    color: 'red',
+    marginLeft: 10,
+  },
+  temperatureBarContainer: {
+    flex: 1,
+    marginHorizontal: 0,
+  },
+  temperatureBar: {
+    width: '100%',
+    height: 10,
+    backgroundColor: '#e0e0e0',
+    borderRadius: 5,
+    overflow: 'hidden',
+    position: 'relative',
+  },
+  temperatureRange: {
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    backgroundColor: '#90caf9',
+    borderRadius: 5,
   },
   error: {
     fontSize: 16,
