@@ -47,11 +47,12 @@ final class PhoneConnector: NSObject, ObservableObject, WCSessionDelegate {
         }
     }
 
-    func sendMessageToPhone(heartRate: Double, steps: Int) {
+    func sendMessageToPhone(heartRate: Double, steps: Int, calories: Double?) {
         if session.isReachable {
             let message: [String: Any] = [
                 "heartRate": heartRate,
                 "steps": steps,
+                "calories": calories ?? 0,
                 "monitoringState": isMonitoring
             ]
             session.sendMessage(message, replyHandler: nil) { error in
@@ -71,13 +72,22 @@ final class PhoneConnector: NSObject, ObservableObject, WCSessionDelegate {
                     onHeartRateUpdated: { [weak self] heartRate in
                         self?.sendMessageToPhone(
                             heartRate: heartRate,
-                            steps: self?.heartRateMonitor?.stepCount ?? 0
+                            steps: self?.heartRateMonitor?.stepCount ?? 0,
+                            calories: self?.heartRateMonitor?.calories
                         )
                     },
                     onStepCountUpdated: { [weak self] steps in
                         self?.sendMessageToPhone(
-                            heartRate: self?.heartRateMonitor?.heartRate ?? 0,
-                            steps: steps
+                            heartRate: self?.heartRateMonitor?.heartRate ?? 0.0, // 옵셔널 기본값 처리
+                            steps: steps,
+                            calories: self?.heartRateMonitor?.calories ?? 0.0 // 옵셔널 기본값 처리
+                        )
+                    },
+                    onCaloriesUpdated: { [weak self] calories in
+                        self?.sendMessageToPhone(
+                            heartRate: self?.heartRateMonitor?.heartRate ?? 0.0, // 옵셔널 기본값 처리
+                            steps: self?.heartRateMonitor?.stepCount ?? 0, // 옵셔널 기본값 처리
+                            calories: calories // 이미 Double 타입
                         )
                     }
                 )

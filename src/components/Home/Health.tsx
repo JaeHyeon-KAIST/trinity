@@ -3,6 +3,8 @@ import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import AppleHealthKit from 'react-native-health';
 
 import HeartRateSVG from '../../assets/icon/heartRate.svg';
+import {NavigationProp, useNavigation} from '@react-navigation/native';
+import {RootStackParamList} from '../../router/Router.tsx';
 
 // Define the type for heart rate data
 type HeartRateSample = {
@@ -11,6 +13,7 @@ type HeartRateSample = {
 };
 
 export default function Health() {
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const [heartRateData, setHeartRateData] = useState<HeartRateSample | null>(
     null,
   );
@@ -70,7 +73,10 @@ export default function Health() {
       ) : (
         <Text style={styles.loading}>Loading...</Text>
       )}
-      <TouchableOpacity style={styles.button} activeOpacity={0.7}>
+      <TouchableOpacity
+        onPress={() => navigation.navigate('Workout')}
+        style={styles.button}
+        activeOpacity={0.7}>
         <Text style={styles.buttonText}>측정 시작하기</Text>
       </TouchableOpacity>
     </View>

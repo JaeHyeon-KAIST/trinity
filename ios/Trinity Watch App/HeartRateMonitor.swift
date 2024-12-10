@@ -4,6 +4,7 @@ import SwiftUI
 final class HeartRateMonitor: NSObject, ObservableObject {
     @Published var heartRate: Double?
     @Published var stepCount: Int = 0
+    @Published var calories: Double = 0.0
     private let healthStore = HKHealthStore()
     private var activeQuery: HKAnchoredObjectQuery?
     private var stepQuery: HKQuery?
@@ -57,6 +58,49 @@ final class HeartRateMonitor: NSObject, ObservableObject {
             completion(success)
         }
     }
+  
+    private func processCalories(samples: [HKSample]?, onCaloriesUpdated: @escaping (Double) -> Void) {
+        guard let samples = samples as? [HKQuantitySample] else { return }
+        guard let latestSample = samples.last else { return }
+
+        let calorieValue = latestSample.quantity.doubleValue(for: HKUnit.kilocalorie())
+
+        DispatchQueue.main.async {
+            self.calories = calorieValue
+            onCaloriesUpdated(calorieValue)
+        }
+    }
+  
+    private func startCalorieMonitoring(onCaloriesUpdated: @escaping (Double) -> Void) {
+        guard let calorieType = HKObjectType.quantityType(forIdentifier: .activeEnergyBurned) else {
+            print("Calorie type unavailable.")
+            return
+        }
+
+        let predicate = HKQuery.predicateForSamples(withStart: Date(), end: nil, options: .strictStartDate)
+
+        let query = HKAnchoredObjectQuery(
+            type: calorieType,
+            predicate: predicate,
+            anchor: nil,
+            limit: HKObjectQueryNoLimit
+        ) { [weak self] _, samples, _, _, _ in
+            self?.processCalories(samples: samples, onCaloriesUpdated: onCaloriesUpdated)
+        }
+
+        query.updateHandler = { [weak self] _, samples, _, _, _ in
+            self?.processCalories(samples: samples, onCaloriesUpdated: onCaloriesUpdated)
+        }
+
+        healthStore.execute(query)
+
+        // Enable background delivery for active energy burned
+        healthStore.enableBackgroundDelivery(for: calorieType, frequency: .immediate) { success, error in
+            if let error = error {
+                print("Failed to enable background delivery for calories: \(error)")
+            }
+        }
+    }
 
     private func startStepCounting() {
         guard let stepType = HKObjectType.quantityType(forIdentifier: .stepCount) else { return }
@@ -103,7 +147,9 @@ final class HeartRateMonitor: NSObject, ObservableObject {
         }
     }
 
-    func startHeartRateMonitoring(onHeartRateUpdated: @escaping (Double) -> Void, onStepCountUpdated: @escaping (Int) -> Void) {
+    func startHeartRateMonitoring(onHeartRateUpdated: @escaping (Double) -> Void,
+                                  onStepCountUpdated: @escaping (Int) -> Void,
+                                  onCaloriesUpdated: @escaping (Double) -> Void) {
         guard isHealthDataAvailable() else {
             print("Health data not available.")
             return
@@ -114,6 +160,7 @@ final class HeartRateMonitor: NSObject, ObservableObject {
             if authorized {
                 self.beginHeartRateMonitoring(onHeartRateUpdated: onHeartRateUpdated)
                 self.startStepCounting()
+                self.startCalorieMonitoring(onCaloriesUpdated: onCaloriesUpdated)
                 // Setup step count updates
                 self.$stepCount.sink { steps in
                     onStepCountUpdated(steps)
@@ -123,6 +170,7 @@ final class HeartRateMonitor: NSObject, ObservableObject {
                     if success {
                         self.beginHeartRateMonitoring(onHeartRateUpdated: onHeartRateUpdated)
                         self.startStepCounting()
+                        self.startCalorieMonitoring(onCaloriesUpdated: onCaloriesUpdated)
                     } else {
                         print("HealthKit authorization failed.")
                     }
@@ -203,6 +251,7 @@ final class HeartRateMonitor: NSObject, ObservableObject {
         
         // Reset step count
         stepCount = 0
+        calories = 0.0
         
         guard let builder = workoutBuilder else { return }
         
@@ -224,7 +273,8 @@ final class HeartRateMonitor: NSObject, ObservableObject {
             
             // Disable background delivery
             if let heartRateType = HKObjectType.quantityType(forIdentifier: .heartRate),
-               let stepType = HKObjectType.quantityType(forIdentifier: .stepCount) {
+               let stepType = HKObjectType.quantityType(forIdentifier: .stepCount),
+               let calorieType = HKObjectType.quantityType(forIdentifier: .activeEnergyBurned) {
                 self?.healthStore.disableBackgroundDelivery(for: heartRateType) { success, error in
                     if let error = error {
                         print("Failed to disable background delivery for heart rate: \(error)")
@@ -233,6 +283,11 @@ final class HeartRateMonitor: NSObject, ObservableObject {
                 self?.healthStore.disableBackgroundDelivery(for: stepType) { success, error in
                     if let error = error {
                         print("Failed to disable background delivery for steps: \(error)")
+                    }
+                }
+                self?.healthStore.disableBackgroundDelivery(for: calorieType) { success, error in
+                    if let error = error {
+                        print("Failed to disable background delivery for calories: \(error)")
                     }
                 }
             }
